@@ -1,0 +1,17 @@
+language: php
+php:
+ - '7.2'
+ - '7.3'
+ - '7.4'
+
+branches:
+  only:
+    - master
+
+
+before_script:
+  - sudo apt-get update
+  - composer install --no-dev
+
+
+script: phpunit --configuration phpunit.xml 
