@@ -22,7 +22,7 @@
        "psr-4": {
          "Scrawler\\": "src/"
        },
-       "files": ["src/rb-mysql.php","src/Boot.php","src/Helper.php"]
+       "files": ["src/rb-mysql.php","src/boot.php","src/helper.php"]
    },
    "autoload-dev": {
     "psr-4": {
