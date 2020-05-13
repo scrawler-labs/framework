@@ -8,14 +8,7 @@
 
 ## About Scrawler Framework
 
-Scrawler is a PHP framework for Rapid Application Development keeping high speed and automated development in mind. Scrawler consist of helper function and classes that makes application development really fast and has focus on performace and agressive caching.
-
-## Usage
-
-1. `git clone git@github.com:Corpusvision/Scrawler.git`
-2. `composer install`
-
-2. Start writing your logic inside `/app/controllers` everything else would be taken care by framework itself!
+Note this is the main componet repo for actual framework goto <a href="https://github.com/scrawler/scrawler">Scrawler/Scrawler</a>
 
 ## Components used by scrawler framework:
 
