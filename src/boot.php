@@ -13,7 +13,7 @@ $whoops->register();
 $scrawler = new Scrawler\Scrawler();
 
 //load helper functions
-include __DIR__.'helper.php';
+include __DIR__.'/helper.php';
 
 //Resolvers from the router component
 $controllerResolver = new ControllerResolver();
