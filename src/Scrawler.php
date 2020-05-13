@@ -91,20 +91,22 @@ class Scrawler
      */
     public function __construct()
     { 
-        $this->base_dir = __DIR__.'/../../../';
-        $this->config = parse_ini_file($this->base_dir."config/app.ini",true);
+        //Get root dir of project
+        $this->base_dir = dirname(\Composer\Factory::getComposerFile());
+
+        $this->config = parse_ini_file($this->base_dir."/config/app.ini",true);
         self::$scrawler = $this;
         $this->cache = new Cache();
         $this->request = Request::createFromGlobals();
         $this->db = new Database();
-        $this->routeCollection = new RouteCollection($this->base_dir.'app/controllers', 'App\Controllers');
+        $this->routeCollection = new RouteCollection($this->base_dir.'/app/controllers', 'App\Controllers');
         $this->dispatcher = new EventDispatcher();
         $this->module = new Module();
         $this->session  = new Session('kfenkfhcnbejd');
         $this->mail = new Mailer(true);
         //templateing engine
-        $views = $this->base_dir.'app/views';
-        $cache = $this->base_dir.'cache/templates';
+        $views = $this->base_dir.'/app/views';
+        $cache = $this->base_dir.'/cache/templates';
         $this->template = new Template($views,$cache);
 
         $this->registerCoreListners();

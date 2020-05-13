@@ -6,11 +6,11 @@
  * @package: Scrawler
  * @author: Pranjal Pandey
  */
-namespace Scrawler\Service;
+namespace Scrawler;
 
 use R;
 
-class Slim
+Class Slim
 {
     /**
      * Array too store request path info
@@ -32,7 +32,9 @@ class Slim
      */
     public function __construct()
     {
-        $config =  parse_ini_file(__DIR__."/../../config.ini", true);
+
+        $this->base_dir = dirname(\Composer\Factory::getComposerFile());
+        $sconfig = parse_ini_file($this->base_dir."/config/app.ini",true);
         R::setup('mysql:host='.$config['database']['host'].';dbname='.$config['database']['database'], $config['database']['username'], $config['database']['password']);
         $this->path_info = explode('/', $_SERVER['REQUEST_URI']);
         array_shift($this->path_info);
