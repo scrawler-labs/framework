@@ -30,7 +30,7 @@ if (! function_exists('view')) {
   if (! function_exists('url')) {
       function url($path='')
       {
-          return Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler\Scrawler::engine()->request()->getBasePath().$path;
+          return Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler::engine()->request()->getBasePath().$path;
       }
   }
 

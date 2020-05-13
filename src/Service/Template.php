@@ -57,6 +57,6 @@ class Template extends BladeOne
      */
     public function compileAsset($file){
         $file = $this->strip($file);
-        return url('/assets\/'.$file);
+        return url('/assets/'.$file);
     }
 }
