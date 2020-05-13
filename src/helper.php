@@ -1,5 +1,7 @@
 <?php
 use Scrawler\Scrawler;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 /**
  * Helper function to return instance of scrawler
  * 
@@ -42,4 +44,13 @@ if (! function_exists('view')) {
       {
           return Scrawler::engine()->request();
       }
+  }
+
+  /**
+   * Redirect user
+   */
+  if(! function_exists('redirect')){
+    function redirect($url){
+    return new RedirectResponse($url);
+    }
   }
