@@ -1,5 +1,5 @@
 <?php
-
+use Scrawler\Scrawler;
 /**
  * Helper function to return instance of scrawler
  * 
@@ -8,7 +8,7 @@
 if (! function_exists('s')) {
     function s()
     {
-        return Scrawler\Scrawler::engine();
+        return Scrawler::engine();
     }
 }
 
@@ -20,7 +20,7 @@ if (! function_exists('s')) {
 if (! function_exists('view')) {
     function view($file, $vars)
     {
-        return Scrawler\Scrawler::engine()->template()->render($file, $vars);
+        return Scrawler::engine()->template()->render($file, $vars);
     }
 }
 
@@ -30,7 +30,7 @@ if (! function_exists('view')) {
   if (! function_exists('url')) {
       function url($path='')
       {
-          return Scrawler\Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler\Scrawler::engine()->request()->getBasePath().$path;
+          return Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler\Scrawler::engine()->request()->getBasePath().$path;
       }
   }
 
@@ -40,6 +40,6 @@ if (! function_exists('view')) {
   if (! function_exists('request')) {
       function request()
       {
-          return Scrawler\Scrawler::engine()->request();
+          return Scrawler::engine()->request();
       }
   }
