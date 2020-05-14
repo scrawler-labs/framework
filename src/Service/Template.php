@@ -63,7 +63,7 @@ class Template extends BladeOne
     /**
      * Get csrf token
      */
-    public function compileCsrf(){
+    public function compileToken(){
         Scrawler::engine()->session()->start();
         $token = bin2hex(random_bytes(32));
         Scrawler::engine()->session()->flash('csrf_token',$token);
