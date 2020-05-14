@@ -100,8 +100,18 @@ class Session
      */
     public function start()
     {
+        if($this->status()){
         // start session
         session_start();
+        }
+        
+    }
+
+    /**
+     * Check is session has already been started
+     */
+    public function  status(){
+        return session_status() == PHP_SESSION_NONE;
     }
 
     /**
