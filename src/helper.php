@@ -47,11 +47,18 @@ if (! function_exists('view')) {
   }
 
   /**
-   * Redirect user
+   * Redirect user with flash data if given
    */
   if (! function_exists('redirect')) {
-      function redirect($url)
+      function redirect($url,$data=[])
       {
+          if(!empty($data)){
+            Scrawler::engine()->session()->start();
+
+              foreach($data as $key=>$value){
+                Scrawler::engine()->session()->set_flash($key,$value);
+              }
+          }   
           return new RedirectResponse($url);
       }
   }
