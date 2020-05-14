@@ -85,7 +85,7 @@ class Database
      * @return array|OODBBean all records matching query
      */
     function getForUpdate($model,$id){
-        return $this->toolbox->loadForUpdate($model,$id); 
+        return \R::loadForUpdate($model,$id); 
     }
 
     /**
