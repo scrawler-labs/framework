@@ -210,9 +210,20 @@ class Scrawler
     {
         //Add the route listner
         $this->dispatcher->addListener('kernel.request', function (Event $event) {
-            $request=$event->getRequest();
-            $engine = new RouterEngine($request, $this->routeCollection);
-            $engine->route();
+            if(isset($request->csrf_token)){
+              if(csrf()){
+                $request=$event->getRequest();
+                $engine = new RouterEngine($request, $this->routeCollection);
+                $engine->route();
+              }else{
+                  throw exception('csrf error');
+              }
+            }else{
+                $request=$event->getRequest();
+                $engine = new RouterEngine($request, $this->routeCollection);
+                $engine->route();
+            }
+          
         });
 
         //Generate response from controller returned value

@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP session overridrr
+ * PHP session override
  *
  * @package: Scrawler
  * @author: Pranjal Pandey

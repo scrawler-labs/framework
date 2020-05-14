@@ -93,7 +93,7 @@ if (! function_exists('view')) {
         }
     }
 
-        /**
+    /**
      * session read and write helper
      */
     if (! function_exists('flash_has')) {
@@ -103,4 +103,19 @@ if (! function_exists('view')) {
             return Scrawler::engine()->session()->isset($key);
         }
     }
+
+    /**
+     *  helper method to check csrf token
+     */
+    if (! function_exists('csrf')) {
+        function csrf()
+        {
+            Scrawler::engine()->session()->start();
+            if (hash_equals(Scrawler::engine()->session()->csrf_token, Scrawler::engine()->request()->csrf_token))
+            return true;
+
+            return false;
+        }
+    }
+
 
