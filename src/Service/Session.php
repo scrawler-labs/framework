@@ -134,7 +134,7 @@ class Session
     public function gc()
     {
         $sessions = $this->db->find('session', 'session_expire < ?', [time()]);
-        $this->db::deleteAll($sessions);
+        $this->db->deleteAll($sessions);
         return true;
     }
 
