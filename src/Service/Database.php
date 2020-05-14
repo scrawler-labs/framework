@@ -56,7 +56,7 @@ class Database
     /**
      * Overriding get method to either get single or all records
      * if get is called call this else call parent override
-     * Example use db()::get('users')
+     * Example use db()->get('users')
      *
      * @param string name of model
      * @param int id of model to retrive
@@ -74,6 +74,18 @@ class Database
             }
         }
         return \R::__callStatic($name, $arguments);
+    }
+    
+    /**
+     * Get record in locked mode 
+     * 
+     * @param string name of model
+     * @param int id of model to retrive
+     *
+     * @return array|OODBBean all records matching query
+     */
+    function getForUpdate($model,$id){
+        return $this->toolbox->loadForUpdate($model,$id); 
     }
 
     /**
@@ -125,6 +137,7 @@ class Database
         }
         return $this->save($model);
     }
+
 
 
 }
