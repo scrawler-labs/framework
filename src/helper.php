@@ -4,7 +4,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Helper function to return instance of scrawler
- * 
+ *
  * @return Object \Scrawler\Scrawler
  */
 if (! function_exists('s')) {
@@ -16,7 +16,7 @@ if (! function_exists('s')) {
 
 /**
  * Render template  from template engine
- * 
+ *
  * @return String rendered body
  */
 if (! function_exists('view')) {
@@ -49,8 +49,24 @@ if (! function_exists('view')) {
   /**
    * Redirect user
    */
-  if(! function_exists('redirect')){
-    function redirect($url){
-    return new RedirectResponse($url);
-    }
+  if (! function_exists('redirect')) {
+      function redirect($url)
+      {
+          return new RedirectResponse($url);
+      }
   }
+
+    /**
+     * session read and write helper
+     */
+    if (! function_exists('session')) {
+        function session($key,$value=NULL)
+        {
+            Scrawler::engine()->session()->start();
+            if($value == NULL){
+                return Scrawler::engine()->session()->$key;
+            }else{
+                Scrawler::engine()->session()->$key = $value;
+            }
+        }
+    }
