@@ -20,7 +20,7 @@ if (! function_exists('s')) {
  * @return String rendered body
  */
 if (! function_exists('view')) {
-    function view($file, $vars)
+    function view($file, $vars=[])
     {
         return Scrawler::engine()->template()->render($file, $vars);
     }
