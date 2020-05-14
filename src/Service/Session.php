@@ -79,7 +79,7 @@ class Session
         $this->flash_data = array();
 
         // if any flash data exists
-        if (isset($_SESSION[$thFis->flash_data_var])) {
+        if (isset($_SESSION[$this->flash_data_var])) {
 
             // retrieve flash data
             $this->flash_data = unserialize($_SESSION[$this->flash_data_var]);
@@ -173,11 +173,12 @@ class Session
 
     public function flash($name, $value=NULL)
     {
-        if(isset($name)){
+        if(isset($value)){
             $_SESSION[$name] = $value;
         }else{
-            return $_SESSION[$name];
+            $value = $_SESSION[$name];
             $this->clear($name);
+            return $value;
         }
 
         // set session variable

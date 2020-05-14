@@ -56,7 +56,7 @@ if (! function_exists('view')) {
             Scrawler::engine()->session()->start();
 
               foreach($data as $key=>$value){
-                Scrawler::engine()->session()->set_flash($key,$value);
+                Scrawler::engine()->session()->flash($key,$value);
               }
           }   
           return new RedirectResponse($url);
