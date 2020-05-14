@@ -79,7 +79,7 @@ class Session
         $this->flash_data = array();
 
         // if any flash data exists
-        if (isset($_SESSION[$this->flash_data_var])) {
+        if (isset($_SESSION[$thFis->flash_data_var])) {
 
             // retrieve flash data
             $this->flash_data = unserialize($_SESSION[$this->flash_data_var]);
@@ -171,11 +171,16 @@ class Session
         session_regenerate_id(true);
     }
 
-    public function set_flash($name, $value)
+    public function flash($name, $value=NULL)
     {
+        if(isset($name)){
+            $_SESSION[$name] = $value;
+        }else{
+            return $_SESSION[$name];
+            $this->clear($name);
+        }
 
         // set session variable
-        $_SESSION[$name] = $value;
 
         // initialize the counter for this flash data
         $this->flash_data[$name] = 0;
@@ -274,5 +279,9 @@ class Session
     public function __get($key)
     {
         return $_SESSION[$key];
+    }
+
+    public function clear($key){
+        unset($_SESSION[$key]);
     }
 }
