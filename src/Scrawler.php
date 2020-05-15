@@ -122,6 +122,17 @@ class Scrawler
     }
 
     /**
+     * returns the 
+     * 
+     * @return String base directory
+     */
+    public function base_dir()
+    {
+        return $this->base_dir;
+    }
+
+
+    /**
      * returns cache object
      * @return Object \Scrawler\Service\Cache
      */

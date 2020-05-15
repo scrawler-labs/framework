@@ -30,6 +30,13 @@ class Template extends BladeOne
     }
 
     /**
+     * Add path to template
+     */
+    public function addPath($path){
+      array_push($this->templatePath,$path);
+    }
+
+    /**
      * Strips ('')  to  get the variable passed
      */
     private function strip($expression){

@@ -11,27 +11,60 @@ use Scrawler\Scrawler;
 
 class Module
 {
+    /**
+     * Array  containing 
+     */
     private $modules;
-    private $currentModule;
 
-    public function register($name, $namespace, $directory)
+    /**
+     * Directory of module curentttly being registered
+     */
+    private $dir;
+
+    /**
+     * Register a module
+     */
+    public function register($name,$namespace)
     {
-        $this->modules[$name]= array($namespace,$directory);
+        $this->modules[$name] = $namespace.'\\'.$name;
+        $this->dir = Scrawler::engine()->base_dir().'/modules/'.$name;
+        $this->registerRoutes($name,$namespace);
     }
 
+    /**
+     * Load from registerd modules
+     */
     public function load($name)
     {
-        $this->currentModule = $name;
-        return $this;
+        if(isset($this->modules[$name])){
+            if(is_object($this->modules[$name])){
+                return $this->modules[$name];
+            }
+            $this->modules[$name] = new $this->modules[$name]();
+            return $this->modules[$name];
+        }
     }
 
-    public function registerRoutes()
+    /**
+     * Register routes of module
+     */
+    private function registerRoutes($name,$namespace)
     {
-        $files = array_slice(scandir($this->modules[$currentModule][2]), 2);
+        Scrawler::engine()->router()->registerDir($name);
+        $directory = $this->dir.'/Controllers';
+        $files = array_slice(scandir($directory),2);
         foreach ($files as $file) {
-            if ($file != 'Main.php') {
-                Scrawler::engine()->router()->registerController(\basename($file, '.php'), $this->modules[$currentModule][1] . '\\' . \basename($file, '.php'));
+            if ($file != 'Main.php' && !is_dir($directory.'/'.$file)) {
+                Scrawler::engine()->router()->registerController($name.'/'.\basename($file, '.php'),$namespace.'\\Controllers\\'.\basename($file, '.php'));
             }
         }
+    }
+
+
+    /**
+     * Register views of module
+     */
+    public function registerViews(){
+        Scrawler::engine()->template()->addPath($this->dir.'/views');
     }
 }
