@@ -212,8 +212,8 @@ class Scrawler
         $this->dispatcher->addListener('kernel.request', function (Event $event) {
             $request=$event->getRequest();
 
-            if ($request->request->has('csrf_token')) {
-                if (!csrf()) {
+            if ($request->getMethod() == 'POST' && $request->request->has('csrf_token')) {
+                if (!csrf_check()) {
                     throw new \Exception('CSRF token mismatch');
                 }
             }

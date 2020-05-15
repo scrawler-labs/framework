@@ -107,15 +107,35 @@ if (! function_exists('view')) {
     /**
      *  helper method to check csrf token
      */
-    if (! function_exists('csrf')) {
-        function csrf()
+    if (! function_exists('csrf_check')) {
+        function csrf_check()
         {
             Scrawler::engine()->session()->start();
-            if (hash_equals(Scrawler::engine()->session()->csrf_token, Scrawler::engine()->request()->csrf_token))
+            if(!Scrawler::engine()->session()->isset('csrf_token'))
+            return false;
+
+            if (hash_equals(Scrawler::engine()->session()->flash('csrf_token'), Scrawler::engine()->request()->csrf_token))
             return true;
 
             return false;
         }
     }
+
+     /**
+     *  helper method to check csrf token
+     */
+    if (! function_exists('csrf')) {
+        function csrf()
+        {
+            Scrawler::engine()->session()->start();
+            $token = bin2hex(random_bytes(32));
+            Scrawler::engine()->session()->flash('csrf_token',$token);
+
+            return $token;
+        }
+    }
+
+   
+
 
 
