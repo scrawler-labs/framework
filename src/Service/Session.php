@@ -70,26 +70,6 @@ class Session
             session_destroy();
         }
 
-
-        // the name for the session variable that will be used for
-        // holding information about flash data session variables
-        $this->flash_data_var = '_scrawler_session_flash_data_ec4albunk';
-
-        // assume no flash data
-        $this->flash_data = array();
-
-        // if any flash data exists
-        if (isset($_SESSION[$this->flash_data_var])) {
-
-            // retrieve flash data
-            $this->flash_data = unserialize($_SESSION[$this->flash_data_var]);
-
-            // destroy the temporary session variable
-            unset($_SESSION[$this->flash_data_var]);
-        }
-
-        // handle flash data after script execution
-        register_shutdown_function(array($this, '_manage_flash_data'));
     }finally{
         error_reporting(E_ALL);
     }
@@ -191,10 +171,6 @@ class Session
             return $value;
         }
 
-        // set session variable
-
-        // initialize the counter for this flash data
-        $this->flash_data[$name] = 0;
     }
 
     /**
@@ -241,42 +217,6 @@ class Session
         return true;
     }
     
-    /**
-    *  Manages flash data behind the scenes
-    *
-    *  @access private
-    */
-    public function _manage_flash_data()
-    {
-
-        // if there is flash data to be handled
-        if (!empty($this->flash_data)) {
-
-            // iterate through all the entries
-            foreach ($this->flash_data as $variable => $counter) {
-
-                // increment counter representing server requests
-                $this->flash_data[$variable]++;
-
-                // if this is not the first server request
-                if ($this->flash_data[$variable] > 1) {
-
-                    // unset the session variable
-                    unset($_SESSION[$variable]);
-
-                    // stop tracking
-                    unset($this->flash_data[$variable]);
-                }
-            }
-
-            // if there is any flash data left to be handled
-            if (!empty($this->flash_data)) {
-
-                // store data in a temporary session variable
-                $_SESSION[$this->flash_data_var] = serialize($this->flash_data);
-            }
-        }
-    }
 
     public function isset($key){
         return isset($_SESSION[$key]);
