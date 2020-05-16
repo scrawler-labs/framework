@@ -8,11 +8,15 @@
 
 namespace Scrawler;
 
-use Scrawler\Router\RouteCollection;
-use Scrawler\Router\RouterEngine;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernel;
+use Scrawler\Router\RouteCollection;
+use Scrawler\Router\RouterEngine;
+use Scrawler\Router\ArgumentResolver;
+use Scrawler\Router\ControllerResolver;
 use Scrawler\Service\Database;
 use Scrawler\Service\Module;
 use Scrawler\Service\Template;
@@ -22,7 +26,8 @@ use Scrawler\Service\Mailer;
 use Scrawler\Service\Http\Request;
 
 
-class Scrawler
+
+class Scrawler implements HttpKernelInterface
 {
     /**
      * Stores class static instance
@@ -85,32 +90,111 @@ class Scrawler
      */
     private $base_dir;
 
-
+    
     /**
      * Initialize all the needed functionalities
      */
     public function __construct()
     { 
-        //Get root dir of project
         $this->base_dir = dirname(\Composer\Factory::getComposerFile());
-
         $this->config = parse_ini_file($this->base_dir."/config/app.ini",true);
+        if($this->config['general']['development']){
+            $this->registerWhoops();
+        }
+        $this->init();
+
+
+        $this->registerCoreListners();
+        include __DIR__.'/helper.php';
+
+    }
+
+    /**
+     * Initialize Scrawler Engine
+     */
+    private function init(){
+
         self::$scrawler = $this;
         $this->cache = new Cache();
-        $this->request = Request::createFromGlobals();
         $this->db = new Database();
         $this->routeCollection = new RouteCollection($this->base_dir.'/app/controllers', 'App\Controllers');
-        $this->dispatcher = new EventDispatcher();
         $this->module = new Module();
         $this->session  = new Session('kfenkfhcnbejd');
         $this->mail = new Mailer(true);
+        $this->dispatcher  = new EventDispatcher();
         //templateing engine
         $views = $this->base_dir.'/app/views';
         $cache = $this->base_dir.'/cache/templates';
         $this->template = new Template($views,$cache);
-
-        $this->registerCoreListners();
     }
+
+    private function registerWhoops(){
+        $whoops = new \Whoops\Run;
+        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+        $whoops->register();
+    }
+
+    /**
+     * Handle function
+     */
+    public function handle(\Symfony\Component\HttpFoundation\Request $request,  $type = self::MASTER_REQUEST,  $catch = true){
+        try {
+
+        $this->request = $request;
+        $controllerResolver = new ControllerResolver();
+        $argumentResolver = new ArgumentResolver();
+
+        $engine = new RouterEngine($request, $this->routeCollection);
+        $engine->route();
+
+
+        if (false === $controller =$controllerResolver->getController($request)) {
+            throw new NotFoundHttpException(sprintf('Unable to find the controller for path "%s". The route is wrongly configured.', $request->getPathInfo()));
+        }
+
+        $arguments = $argumentResolver->getArguments($request, $controller);
+
+        $cresponse = $controller(...$arguments);
+
+        if (!$cresponse instanceof Response) {
+            $response = new Response(
+                'Content',
+                Response::HTTP_OK,
+                ['content-type' => 'text/html']
+            );
+            $response->setContent($cresponse);
+        } else {
+            $response = $cresponse;
+        }
+
+        return $response;
+    } catch(\Exception $e) {
+        return $this->exceptionHandler($e);
+    }
+    }
+
+    /**
+     * Handel Exception
+     */
+    private function exceptionHandler($e){
+        $response =  new Response();
+
+       if($this->config['general']['development']){
+            throw $e;
+       }else{
+           if($e instanceof \Scrawler\Router\NotFoundException){
+            $response->setStatusCode(404);
+            $response->setContent('404 error lol !');
+           }else{
+            $response->setStatusCode(500);
+            $response->setContent('error lol !');
+           }
+          
+           return  $response;
+       }
+    }
+
+
 
     /**
      * returns the event dispatcher object
@@ -120,17 +204,6 @@ class Scrawler
     {
         return $this->dispatcher;
     }
-
-    /**
-     * returns the 
-     * 
-     * @return String base directory
-     */
-    public function base_dir()
-    {
-        return $this->base_dir;
-    }
-
 
     /**
      * returns cache object
@@ -210,9 +283,8 @@ class Scrawler
     {
         return self::$scrawler;
     }
-
-
-
+   
+ 
     /**
      * Register few core event listners
      * @return null
@@ -227,21 +299,10 @@ class Scrawler
                 if (!csrf_check()) {
                     throw new \Exception('CSRF token mismatch');
                 }
-            }
-           
-                $engine = new RouterEngine($request, $this->routeCollection);
-                $engine->route();
+            }      
           
         });
 
-        //Generate response from controller returned value
-        $this->dispatcher->addListener('kernel.view', function (Event $event) {
-            if (!$event->hasResponse()) {
-                $response = new Response('Content', Response::HTTP_OK, array('content-type' => 'text/html'));
-                $response->setContent($event->getControllerResult());
-                $event->setResponse($response);
-            }
-        });
     }
 
 
