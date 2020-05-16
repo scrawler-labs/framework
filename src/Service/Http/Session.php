@@ -5,7 +5,7 @@
  * @package: Scrawler
  * @author: Pranjal Pandey
  */
-namespace Scrawler\Service;
+namespace Scrawler\Service\Http;
 
 use Scrawler\Scrawler;
 
