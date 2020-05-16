@@ -90,7 +90,13 @@ class Scrawler implements HttpKernelInterface
      */
     private $base_dir;
 
-    
+    /**
+     * Stores the pipeline
+     */
+    private $pipeline;
+
+
+
     /**
      * Initialize all the needed functionalities
      */
@@ -274,6 +280,14 @@ class Scrawler implements HttpKernelInterface
         return $this->template;
     }
 
+    /**
+     * Returns pipeline  object
+     * @return Object Scrawler\Service\Pipeline
+     */
+    public function &pipeline()
+    {
+        return $this->pipeline;
+    }
 
     /**
      * Returns scrawler class object
@@ -283,7 +297,7 @@ class Scrawler implements HttpKernelInterface
     {
         return self::$scrawler;
     }
-   
+
  
     /**
      * Register few core event listners
