@@ -102,8 +102,9 @@ class Scrawler implements HttpKernelInterface
     public function __construct()
     {
         $this->base_dir = dirname(\Composer\Factory::getComposerFile());
+        
         $this->config = parse_ini_file($this->base_dir."/config/app.ini", true);
-        if ($this->config['general']['development']) {
+        if ($this->config['general']['enviornment'] == "development") {
             $this->registerWhoops();
         }
         $this->init();
@@ -117,7 +118,12 @@ class Scrawler implements HttpKernelInterface
     {
         self::$scrawler = $this;
         $this->cache = new Cache();
-        $this->db = new Database();
+
+        //Todo add database to travis  test env
+        if ($this->config['general']['enviornment'] != "test") {
+            $this->db = new Database();
+        }
+        
         $this->routeCollection = new RouteCollection($this->base_dir.'/app/controllers', 'App\Controllers');
         $this->module = new Module();
         $this->session  = new Session('kfenkfhcnbejd');
@@ -193,15 +199,15 @@ class Scrawler implements HttpKernelInterface
     {
         $response =  new Response();
 
-        if ($this->config['general']['development']) {
+        if ($this->config['general']['enviornment']=="development" || $this->config['general']['enviornment']=="test") {
             throw $e;
         } else {
             if ($e instanceof \Scrawler\Router\NotFoundException) {
                 $response->setStatusCode(404);
-                $response->setContent('404 error lol !');
+                $response->setContent('404 error');
             } else {
                 $response->setStatusCode(500);
-                $response->setContent('error lol !');
+                $response->setContent('Internal error');
             }
           
             return  $response;
