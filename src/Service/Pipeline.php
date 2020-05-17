@@ -8,6 +8,7 @@
 namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
+use Scrawler\Interfaces\MiddlewareInterface;
 
 class Pipeline{
 
@@ -37,7 +38,7 @@ class Pipeline{
             throw new InvalidArgumentException(get_class($middlewares) . " is not a valid middleware.");
         }
 
-        return new static(array_merge($this->$middlewares, $middlewares));
+        return new static(array_merge($this->middlewares, $middlewares));
     }
 
     /**
@@ -47,7 +48,7 @@ class Pipeline{
      * @param  Closure $core
      * @return mixed         
      */
-    public function run($object, Closure $core)
+    public function run($object, \Closure $core)
     {
         $coreFunction = $this->createCoreFunction($core);
 
@@ -55,13 +56,13 @@ class Pipeline{
         // in the array, the first function will be "closer" to the core.
         // This also means it will be run last. However, if the reverse the
         // order of the array, the first in the list will be the outer layers.
-        $middlewares = array_reverse($this->$middlewares);
+        $middlewares = array_reverse($this->middlewares);
 
         // We create the onion by starting initially with the core and then
         // gradually wrap it in layers. Each layer will have the next layer "curried"
         // into it and will have the current state (the object) passed to it.
         $completePipeline = array_reduce($middlewares, function($nextMiddleware, $middleware){
-            return $this->createMiddleware($nextMiddlewares, $middleware);
+            return $this->createMiddleware($nextMiddleware, $middleware);
         }, $coreFunction);
 
         // We now have the complete onion and can start passing the object
@@ -84,7 +85,7 @@ class Pipeline{
      * @param  Closure $core the core function
      * @return Closure
      */
-    private function createCoreFunction(Closure $core)
+    private function createCoreFunction(\Closure $core)
     {
         return function($object) use($core) {
             return $core($object);
