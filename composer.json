@@ -15,14 +15,13 @@
         "scrawler/router": "^2.0",
         "filp/whoops": "^2.7",
         "eftec/bladeone": "^3.43",
-        "phpmailer/phpmailer": "^6.1",
-        "composer/composer": "^1.10"
+        "phpmailer/phpmailer": "^6.1"
     },
     "autoload": {
        "psr-4": {
          "Scrawler\\": "src/"
        },
-       "files": ["src/rb-mysql.php","src/boot.php"]
+       "files": ["src/rb-mysql.php"]
    },
    "autoload-dev": {
     "psr-4": {

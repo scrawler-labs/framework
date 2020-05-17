@@ -99,16 +99,12 @@ class Scrawler implements HttpKernelInterface
     /**
      * Initialize all the needed functionalities
      */
-    public function __construct()
+    public function __construct($base_dir)
     {
-        $this->base_dir = dirname(\Composer\Factory::getComposerFile());
-
-         //Get Base directory for tests
-         if(!file_exists($this->base_dir."/config/app.ini"))
-        $this->base_dir = dirname(\Composer\Factory::getComposerFile()).'/tests';
+        $this->base_dir = $base_dir;
 
         $this->config = parse_ini_file($this->base_dir."/config/app.ini", true);
-        if ($this->config['general']['enviornment'] == "development") {
+        if ($this->config['general']['env'] == "dev") {
             $this->registerWhoops();
         }
         $this->init();
@@ -124,7 +120,7 @@ class Scrawler implements HttpKernelInterface
         $this->cache = new Cache();
 
         //Todo add database to travis  test env
-        if ($this->config['general']['enviornment'] != "test") {
+        if ($this->config['general']['env'] != "test") {
             $this->db = new Database();
         }
 
@@ -203,7 +199,7 @@ class Scrawler implements HttpKernelInterface
     {
         $response =  new Response();
 
-        if ($this->config['general']['enviornment']=="development" || $this->config['general']['enviornment']=="test") {
+        if ($this->config['general']['env']!='prod') {
             throw $e;
         } else {
             if ($e instanceof \Scrawler\Router\NotFoundException) {
