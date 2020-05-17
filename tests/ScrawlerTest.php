@@ -27,12 +27,12 @@ class ScrawlerTest extends TestCase
   }
 
   function testHandle(){
-    $this->request = Request::create(
+    $request = Request::create(
       '/hello/world/scrawler',
       'GET'
        );
 
-    $response = Scrawler::engine()->handle();
+    $response = Scrawler::engine()->handle($request);
     $this->assertInstanceOf(Request::class, Scrawler::engine()->request());
     $this->assertEquals('hello scrawler',$response->getContent());
 
