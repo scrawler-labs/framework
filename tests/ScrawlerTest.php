@@ -3,15 +3,17 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use Scrawler\Scrawler;
-use Symfony\Component\HttpFoundation\Request;
-use Scrawler\Service\Database;
 use Scrawler\Service\Module;
 use Scrawler\Service\Template;
 use Scrawler\Service\Cache;
-use Scrawler\Service\Http\Session;
 use Scrawler\Service\Mailer;
 use Scrawler\Router\RouteCollection;
 use Scrawler\Router\RouterEngine;
+use Scrawler\Service\Http\Session;
+use Scrawler\Service\Http\Request;
+use Scrawler\Service\Pipeline;
+
+
 
 class ScrawlerTest extends TestCase
 {
@@ -20,8 +22,19 @@ class ScrawlerTest extends TestCase
       $this->assertInstanceOf(RouteCollection::class, Scrawler::engine()->router());
       $this->assertInstanceOf(Session::class, Scrawler::engine()->session());
       $this->assertInstanceOf(Template::class, Scrawler::engine()->template());
-      $this->assertInstanceOf(Database::class, Scrawler::engine()->db());
+      $this->assertInstanceOf(Module::class, Scrawler::engine()->module());
+      $this->assertInstanceOf(Pipeline::class, Scrawler::engine()->pipeline());
+  }
 
+  function testHandle(){
+    $this->request = Request::create(
+      '/hello/world/scrawler',
+      'GET'
+       );
+    $this->assertInstanceOf(Request::class, Scrawler::engine()->request());
+
+    $response = Scrawler::engine()->handle();
+    $this->assertEquals('hello scrawler',$response->getContent());
 
   }
 }

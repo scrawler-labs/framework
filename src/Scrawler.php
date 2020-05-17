@@ -124,7 +124,7 @@ class Scrawler implements HttpKernelInterface
             $this->db = new Database();
         }
 
-        $this->routeCollection = new RouteCollection($this->base_dir.'/app/controllers', 'App\Controllers');
+        $this->routeCollection = new RouteCollection($this->base_dir.'/app/Controllers', 'App\Controllers');
         $this->module = new Module();
         $this->session  = new Session('kfenkfhcnbejd');
         $this->mail = new Mailer(true);
