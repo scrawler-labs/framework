@@ -8,7 +8,7 @@ use Scrawler\Service\Database;
 use Scrawler\Service\Module;
 use Scrawler\Service\Template;
 use Scrawler\Service\Cache;
-use Scrawler\Service\Session;
+use Scrawler\Service\Http\Session;
 use Scrawler\Service\Mailer;
 use Scrawler\Router\RouteCollection;
 use Scrawler\Router\RouterEngine;
