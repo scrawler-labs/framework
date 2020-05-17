@@ -4,6 +4,6 @@ namespace App\Controllers;
 
 Class Hello{
     function getWorld($name){
-       return 'hello '.$scrawler;
+       return 'hello '.$name;
     }
 }
