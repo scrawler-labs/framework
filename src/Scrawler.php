@@ -22,10 +22,9 @@ use Scrawler\Service\Module;
 use Scrawler\Service\Template;
 use Scrawler\Service\Cache;
 use Scrawler\Service\Mailer;
-use Scrawler\Service\Http\Session;
 use Scrawler\Service\Http\Request;
-
-
+use Scrawler\Service\Http\Session;
+use Scrawler\Service\Pipeline;
 
 class Scrawler implements HttpKernelInterface
 {
@@ -47,6 +46,7 @@ class Scrawler implements HttpKernelInterface
      * Stores the event dispatcher object
      */
     private $dispatcher;
+
 
     /**
      * Stores the module object
@@ -71,19 +71,19 @@ class Scrawler implements HttpKernelInterface
     /**
      * Stores the template
      */
-    private  $template;
+    private $template;
 
 
     /**
      * Stores the session
      */
-    private  $session;
+    private $session;
     
 
     /**
      * Stores the mailer
      */
-    private  $mailer;
+    private $mailer;
 
     /**
      * Base directory of project
@@ -91,35 +91,30 @@ class Scrawler implements HttpKernelInterface
     private $base_dir;
 
     /**
-     * Stores the pipeline
+     * Stores object of pipeline
      */
     private $pipeline;
-
 
 
     /**
      * Initialize all the needed functionalities
      */
     public function __construct()
-    { 
+    {
         $this->base_dir = dirname(\Composer\Factory::getComposerFile());
-        $this->config = parse_ini_file($this->base_dir."/config/app.ini",true);
-        if($this->config['general']['development']){
+        $this->config = parse_ini_file($this->base_dir."/config/app.ini", true);
+        if ($this->config['general']['development']) {
             $this->registerWhoops();
         }
         $this->init();
-
-
-        $this->registerCoreListners();
         include __DIR__.'/helper.php';
-
     }
 
     /**
      * Initialize Scrawler Engine
      */
-    private function init(){
-
+    private function init()
+    {
         self::$scrawler = $this;
         $this->cache = new Cache();
         $this->db = new Database();
@@ -127,14 +122,16 @@ class Scrawler implements HttpKernelInterface
         $this->module = new Module();
         $this->session  = new Session('kfenkfhcnbejd');
         $this->mail = new Mailer(true);
+        $this->pipeline =  new Pipeline();
         $this->dispatcher  = new EventDispatcher();
         //templateing engine
         $views = $this->base_dir.'/app/views';
         $cache = $this->base_dir.'/cache/templates';
-        $this->template = new Template($views,$cache);
+        $this->template = new Template($views, $cache);
     }
 
-    private function registerWhoops(){
+    private function registerWhoops()
+    {
         $whoops = new \Whoops\Run;
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
         $whoops->register();
@@ -143,61 +140,72 @@ class Scrawler implements HttpKernelInterface
     /**
      * Handle function
      */
-    public function handle(\Symfony\Component\HttpFoundation\Request $request,  $type = self::MASTER_REQUEST,  $catch = true){
+    public function handle(\Symfony\Component\HttpFoundation\Request $request, $type = self::MASTER_REQUEST, $catch = true)
+    {
         try {
+            $this->request = $request;
+       
 
-        $this->request = $request;
-        $controllerResolver = new ControllerResolver();
-        $argumentResolver = new ArgumentResolver();
+            $cresponse = $this->pipeline->middleware([
+            new \Scrawler\Middleware\Csrf(),
+        ])
+        ->run($this->request, function ($request) {
+            //$response = ;
+            $controllerResolver = new ControllerResolver();
+            $argumentResolver = new ArgumentResolver();
+    
+            $engine = new RouterEngine($request, $this->routeCollection);
+            $engine->route();
+    
+    
+            if (false === $controller =$controllerResolver->getController($request)) {
+                throw new NotFoundHttpException(sprintf('Unable to find the controller for path "%s". The route is wrongly configured.', $request->getPathInfo()));
+            }
+    
+            $arguments = $argumentResolver->getArguments($request, $controller);
+            return $controller(...$arguments);
+        });
 
-        $engine = new RouterEngine($request, $this->routeCollection);
-        $engine->route();
+            //print_r( $controller(...$arguments));
 
 
-        if (false === $controller =$controllerResolver->getController($request)) {
-            throw new NotFoundHttpException(sprintf('Unable to find the controller for path "%s". The route is wrongly configured.', $request->getPathInfo()));
+            if (!$cresponse instanceof Response) {
+                $response = new Response(
+                    'Content',
+                    Response::HTTP_OK,
+                    ['content-type' => 'text/html']
+                );
+                $response->setContent($cresponse);
+            } else {
+                $response = $cresponse;
+            }
+
+            return $response;
+        } catch (\Exception $e) {
+            return $this->exceptionHandler($e);
         }
-
-        $arguments = $argumentResolver->getArguments($request, $controller);
-
-        $cresponse = $controller(...$arguments);
-
-        if (!$cresponse instanceof Response) {
-            $response = new Response(
-                'Content',
-                Response::HTTP_OK,
-                ['content-type' => 'text/html']
-            );
-            $response->setContent($cresponse);
-        } else {
-            $response = $cresponse;
-        }
-
-        return $response;
-    } catch(\Exception $e) {
-        return $this->exceptionHandler($e);
-    }
     }
 
     /**
      * Handel Exception
      */
-    private function exceptionHandler($e){
+    private function exceptionHandler($e)
+    {
         $response =  new Response();
 
-       if($this->config['general']['development']){
+        if ($this->config['general']['development']) {
             throw $e;
-       }else{
-           if($e instanceof \Scrawler\Router\NotFoundException){
-            $response->setStatusCode(404);
-            $response->setContent('404 error lol !');
-           }else{
-            $response->setStatusCode(500);
-            $response->setContent('error lol !');
-           }
+        } else {
+            if ($e instanceof \Scrawler\Router\NotFoundException) {
+                $response->setStatusCode(404);
+                $response->setContent('404 error lol !');
+            } else {
+                $response->setStatusCode(500);
+                $response->setContent('error lol !');
+            }
           
-           return  $response;
-       }
+            return  $response;
+        }
     }
 
 
@@ -260,7 +268,8 @@ class Scrawler implements HttpKernelInterface
      * Returns database object
      * @return Object \Scrawler\Service\Database
      */
-    public function &db(){
+    public function &db()
+    {
         return $this->db;
     }
     
@@ -268,7 +277,8 @@ class Scrawler implements HttpKernelInterface
      * Returns mailer object
      * @return Object \Scrawler\Service\Mailer
      */
-    public function &mailer(){
+    public function &mailer()
+    {
         return $this->mailer;
     }
 
@@ -276,18 +286,20 @@ class Scrawler implements HttpKernelInterface
      * Returns templating engine object
      * @return Object \Scrawler\Service\Template
      */
-    public function &template(){
+    public function &template()
+    {
         return $this->template;
     }
 
     /**
-     * Returns pipeline  object
-     * @return Object Scrawler\Service\Pipeline
+     * Returns pipeline object
+     * @return Object \Scrawler\Service\Pipeline
      */
     public function &pipeline()
     {
         return $this->pipeline;
     }
+
 
     /**
      * Returns scrawler class object
@@ -297,27 +309,4 @@ class Scrawler implements HttpKernelInterface
     {
         return self::$scrawler;
     }
-
- 
-    /**
-     * Register few core event listners
-     * @return null
-     */
-    private function registerCoreListners()
-    {
-        //Add the route listner
-        $this->dispatcher->addListener('kernel.request', function (Event $event) {
-            $request=$event->getRequest();
-
-            if ($request->getMethod() == 'POST' && $request->request->has('csrf_token')) {
-                if (!csrf_check()) {
-                    throw new \Exception('CSRF token mismatch');
-                }
-            }      
-          
-        });
-
-    }
-
-
 }

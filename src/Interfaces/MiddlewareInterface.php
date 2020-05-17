@@ -6,5 +6,5 @@ use \Closure;
 
 interface MiddlewareInterface
 {
-    public function run($object, Closure $next);
+    public function run($request, Closure $next);
 }
