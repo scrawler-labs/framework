@@ -130,7 +130,8 @@ class Database
      *  Function to save data in model using request
      *   @param OODBBean you want to remove from databse
      */
-    public function saveRequest($model){
+    public function saveRequest($name){
+        $model = $this->create($name);
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
             if($key != 'csrf'){
                 $model->$key  = $value;
@@ -143,11 +144,15 @@ class Database
  * fuunction to create model from requuest
  */
     public function bindRequest($model){
+        $model = $this->create($name);
+
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
             if($key != 'csrf'){
                 $model->$key  = $value;
             }
         }
+
+        return $model;
     }
 
 
