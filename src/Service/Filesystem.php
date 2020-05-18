@@ -10,13 +10,20 @@ namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
 
-class Filesystem extends \League\Flysystem\Filesystem
-{
-    public function saveRequest($path='')
-    {
-        $files= Scrawler::engine()->request()->files->all();
-        foreach ($files as $file) {
-            $this->write($path, $file);
-        }
-    }
-}
+ Class Filesystem extends \League\Flysystem\Filesystem{
+      /**
+       * Upload all available file from request
+       */
+      public function saveRequest($path=''){
+          $uploaded = [];
+          $files= Scrawler::engine()->request()->files->all();
+          foreach($files as $name => $file){
+            $content = file_get_contents($file->getPathname());
+            $filename=md5($file->getClientOriginalName()).uniqid().'.'.$file->getClientOriginalExtension();
+            $this->write($path.$filename, $content);  
+            $uploaded[$name] =  url('/storage/'.$filename);     
+          }
+          return $uploaded;
+      }
+
+ }

@@ -109,6 +109,7 @@ class Scrawler implements HttpKernelInterface
     public function __construct($base_dir)
     {
         $this->base_dir = $base_dir;
+        $this->config['general']['base_dir'] = $this->base_dir;
 
         $this->config = parse_ini_file($this->base_dir."/config/app.ini", true);
         if ($this->config['general']['env'] == "dev") {
@@ -138,7 +139,9 @@ class Scrawler implements HttpKernelInterface
         $this->pipeline =  new Pipeline();
         $this->dispatcher  = new EventDispatcher();
 
-        $adapter = new LocalFilesystemAdapter($this->base_dir.'/storage/');
+        $adapter = new LocalFilesystemAdapter($this->base_dir.'/storage');
+        $this->config['general']['storage'] = $this->base_dir.'/storage';
+
         $this->filesystem = new Filesystem($adapter);
 
         //templateing engine
