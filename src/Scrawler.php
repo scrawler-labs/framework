@@ -138,7 +138,7 @@ class Scrawler implements HttpKernelInterface
         $this->pipeline =  new Pipeline();
         $this->dispatcher  = new EventDispatcher();
 
-        $adapter = new LocalFilesystemAdapter($this->base_dir.'/storage');
+        $adapter = new LocalFilesystemAdapter($this->base_dir.'/storage/');
         $this->filesystem = new Filesystem($adapter);
 
         //templateing engine

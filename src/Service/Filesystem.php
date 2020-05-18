@@ -16,7 +16,7 @@ class Filesystem extends \League\Flysystem\Filesystem
     {
         $files= Scrawler::engine()->request()->files->all();
         foreach ($files as $file) {
-            $filesystem->write($path, $file);
+            $this->write($path, $file);
         }
     }
 }
