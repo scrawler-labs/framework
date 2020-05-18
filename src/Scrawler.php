@@ -25,6 +25,8 @@ use Scrawler\Service\Mailer;
 use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class Scrawler implements HttpKernelInterface
 {
@@ -95,6 +97,11 @@ class Scrawler implements HttpKernelInterface
      */
     private $pipeline;
 
+    /**
+     * Stores filesystem object
+     */
+    private $filesystem;
+
 
     /**
      * Initialize all the needed functionalities
@@ -130,6 +137,10 @@ class Scrawler implements HttpKernelInterface
         $this->mail = new Mailer(true);
         $this->pipeline =  new Pipeline();
         $this->dispatcher  = new EventDispatcher();
+
+        $adapter = new LocalFilesystemAdapter($this->base_dir.'/storage');
+        $this->filesystem = new Filesystem($adapter);
+
         //templateing engine
         $views = $this->base_dir.'/app/views';
         $cache = $this->base_dir.'/cache/templates';
@@ -223,6 +234,15 @@ class Scrawler implements HttpKernelInterface
     public function &dispatcher()
     {
         return $this->dispatcher;
+    }
+
+    /**
+     * returns the filesystem object
+     * @return Object FileSystem
+     */
+    public function &filesystem()
+    {
+        return $this->filesystem;
     }
 
     /**
