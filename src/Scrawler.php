@@ -25,7 +25,7 @@ use Scrawler\Service\Mailer;
 use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
-use League\Flysystem\Filesystem;
+use Scrawler\Service\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class Scrawler implements HttpKernelInterface
