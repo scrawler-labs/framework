@@ -10,7 +10,7 @@ namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
 
-class Filesystem extends League\Flysystem\Filesystem
+class Filesystem extends \League\Flysystem\Filesystem
 {
     public function saveRequest($path='')
     {
