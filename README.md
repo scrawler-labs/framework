@@ -8,7 +8,7 @@
 
 ## About Scrawler Framework
 
-Note this is the main componet repo for actual framework goto <a href="https://github.com/scrawler/scrawler">Scrawler/Scrawler</a>
+Note this is the main componet repo for actual framework goto <a href="https://github.com/scrawler-php/scrawler">Scrawler-php/Scrawler</a>
 
 ## Components used by scrawler framework:
 
