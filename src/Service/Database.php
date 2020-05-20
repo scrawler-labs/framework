@@ -10,6 +10,7 @@ namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
 use RedBeanPHP\Finder;
+use RedBeanPHP\OODBBean;
 
 class Database 
 {
@@ -130,8 +131,10 @@ class Database
      *  Function to save data in model using request
      *   @param OODBBean you want to remove from databse
      */
-    public function saveRequest($name){
+    public function saveRequest($model){
+        if(!($model instanceof OODBBean))
         $model = $this->create($name);
+       
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
             if($key != 'csrf'){
                 $model->$key  = $value;
@@ -144,6 +147,7 @@ class Database
  * fuunction to create model from requuest
  */
     public function bindRequest($name){
+        if(!($model instanceof OODBBean))
         $model = $this->create($name);
 
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
