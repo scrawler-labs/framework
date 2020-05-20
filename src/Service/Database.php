@@ -143,7 +143,7 @@ class Database
 /**
  * fuunction to create model from requuest
  */
-    public function bindRequest($model){
+    public function bindRequest($name){
         $model = $this->create($name);
 
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
