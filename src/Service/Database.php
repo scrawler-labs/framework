@@ -133,7 +133,7 @@ class Database
      */
     public function saveRequest($model){
         if(!($model instanceof OODBBean))
-        $model = $this->create($name);
+        $model = $this->create($model);
        
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
             if($key != 'csrf'){
@@ -146,9 +146,9 @@ class Database
 /**
  * fuunction to create model from requuest
  */
-    public function bindRequest($name){
+    public function bindRequest($model){
         if(!($model instanceof OODBBean))
-        $model = $this->create($name);
+        $model = $this->create($model);
 
         foreach(Scrawler::engine()->request()->all() as $key=>$value){
             if($key != 'csrf'){
