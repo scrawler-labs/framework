@@ -12,43 +12,40 @@ use Scrawler\Scrawler;
 use RedBeanPHP\Finder;
 use RedBeanPHP\OODBBean;
 
-class Database 
+class Database
 {
-   private $toolbox;
-   private $finder;
+    private $toolbox;
+    private $finder;
 
     /**
      * Initialize Readbead DB
-     * @return Database
      */
     public function __construct()
     {
-       \R::setup('mysql:host='.Scrawler::engine()->config['database']['host'].';dbname='.Scrawler::engine()->config['database']['database'], Scrawler::engine()->config['database']['username'], Scrawler::engine()->config['database']['password']);
-       $t = \R::getToolBox(); 
-       $this->toolbox = $t->getRedBean();
-       $this->finder = new Finder( $t );
+        \R::setup('mysql:host='.Scrawler::engine()->config['database']['host'].';dbname='.Scrawler::engine()->config['database']['database'], Scrawler::engine()->config['database']['username'], Scrawler::engine()->config['database']['password']);
+        $t = \R::getToolBox();
+        $this->toolbox = $t->getRedBean();
+        $this->finder = new Finder($t);
     }
 
     /**
-     * Create a Model
+     * Creates new model to set property anbd save in database
      *
-     * @param String name of model
-     *
-     * @return OODBBean bean instance
+     * @param String $name
+     * @return OODBBean
      */
-    public function create($name)
+    public function create(String $name)
     {
         return $this->toolbox->dispense($name);
     }
     
     /**
-     * Save Model to database
+     * Saves the model to the database
      *
-     * @param OODBBean bean to save in your DB
-     *
-     * @return int  id of stored object
+     * @param OODBBean $model
+     * @return int $id of stored record
      */
-    public function save($model)
+    public function save(OODBBean $model)
     {
         return $this->toolbox->store($model);
     }
@@ -59,10 +56,8 @@ class Database
      * if get is called call this else call parent override
      * Example use db()->get('users')
      *
-     * @param string name of model
-     * @param int id of model to retrive
      *
-     * @return array|OODBBean all records matching query
+     * @return OODBBean|array
      */
     public function __call($name, $arguments)
     {
@@ -71,94 +66,111 @@ class Database
                 return $this->toolbox->load($arguments[0], $arguments[1]);
             }
             if (count($arguments) == 1) {
-                return $this->finder->find($arguments[0],NULL,[]);
+                return $this->finder->find($arguments[0], null, []);
             }
         }
         return \R::__callStatic($name, $arguments);
     }
     
     /**
-     * Get record in locked mode 
-     * 
-     * @param string name of model
-     * @param int id of model to retrive
+     * Get record in locked mode
      *
-     * @return array|OODBBean all records matching query
+     * @param string $table of model
+     * @param int $id of model to retrive
+     *
+     * @return OODBBean
      */
-    function getForUpdate($model,$id){
-        return \R::loadForUpdate($model,$id); 
+    public function getForUpdate(String $table, int $id)
+    {
+        return \R::loadForUpdate($table, $id);
     }
 
     /**
-     *  Delete a record
-     *
-     * @param OODBBean you want to remove from databse
-     *
+     * Delete a particular record
+     * @param OODBBean $model
      * @return void
      */
-    public  function delete($model)
+    public function delete(OODBBean $model)
     {
         return $this->toolbox->trash($model);
     }
 
     /**
-     *  Delete multiple records
+     * delete all records from table
      *
-     * @param OODBBean you want to remove from databse
-     *
+     * @param String $table
      * @return void
      */
-    public function deleteAll($models)
+    public function deleteAll(String $table)
     {
-        return $this->toolbox->trashAll($models);
+        return $this->toolbox->trashAll($table);
     }
 
     /**
-     *  Find record
+     * Find and returns array of records
+     *
+     * @param String $table
+     * @param String $query
+     * @param array $values
+     * @return array
      */
-    public function find($model,$query,$values=[]){
-        return $this->finder->find($model,$query,$values);
-    }
-
-     /**
-     *  Find single record
-     */
-    public function findOne($model,$query,$values=[]){
-        return $this->finder->findOne($model,$query,$values);
+    public function find(String $table, String $query, $values=[])
+    {
+        return $this->finder->find($table, $query, $values);
     }
 
     /**
-     *  Function to save data in model using request
-     *   @param OODBBean you want to remove from databse
+     * Find and return single record
+     *
+     * @param String $model
+     * @param String $query
+     * @param array $values
+     * @return OODBBean
      */
-    public function saveRequest($model){
-        if(!($model instanceof OODBBean))
-        $model = $this->create($model);
+    public function findOne(String $table, String $query, $values=[])
+    {
+        return $this->finder->findOne($table, $query, $values);
+    }
+
+    /**
+     * Bind all value from incoming request to model (aka bean)
+     * and saves it.
+     *
+     * @param OODBBean|String $model
+     * @return void
+     */
+    public function saveRequest($model)
+    {
+        if (!($model instanceof OODBBean)) {
+            $model = $this->create($model);
+        }
        
-        foreach(Scrawler::engine()->request()->all() as $key=>$value){
-            if($key != 'csrf'){
+        foreach (Scrawler::engine()->request()->all() as $key=>$value) {
+            if ($key != 'csrf') {
                 $model->$key  = $value;
             }
         }
         return $this->save($model);
     }
 
-/**
- * fuunction to create model from requuest
- */
-    public function bindRequest($model){
-        if(!($model instanceof OODBBean))
-        $model = $this->create($model);
+    /**
+     * Bind all value from incoming request to model (aka bean)
+     *
+     * @param OODBBean|String $model
+     * @return void
+     */
+    public function bindRequest($model)
+    {
+        if (!($model instanceof OODBBean)) {
+            $model = $this->create($model);
+        }
 
-        foreach(Scrawler::engine()->request()->all() as $key=>$value){
-            if($key != 'csrf'){
+        foreach (Scrawler::engine()->request()->all() as $key=>$value) {
+            if ($key != 'csrf') {
                 $model->$key  = $value;
             }
         }
 
         return $model;
     }
-
-
-
 }
