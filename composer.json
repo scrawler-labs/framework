@@ -17,7 +17,6 @@
         "eftec/bladeone": "^3.43",
         "phpmailer/phpmailer": "^6.1",
         "league/flysystem": "^1.0",
-        "cache/cache": "^1.0",
         "cache/filesystem-adapter": "^1.0"
 
     },
