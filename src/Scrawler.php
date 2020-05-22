@@ -126,7 +126,6 @@ class Scrawler implements HttpKernelInterface
     private function init()
     {
         self::$scrawler = $this;
-        $this->cache = new Cache();
 
         //Todo add database to travis  test env
         if ($this->config['general']['env'] != "test") {
@@ -143,6 +142,7 @@ class Scrawler implements HttpKernelInterface
         $this->config['general']['storage'] = $this->base_dir.'/storage';
 
         $this->filesystem = new Filesystem($this->config['adapter']['filesystem']);
+        $this->cache = new Cache();
 
         //templateing engine
         $views = $this->base_dir.'/app/views';
