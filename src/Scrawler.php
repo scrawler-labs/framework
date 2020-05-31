@@ -25,7 +25,7 @@ use Scrawler\Service\Mailer;
 use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
-use Scrawler\Service\Filesystem;
+use Scrawler\Service\Storage;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class Scrawler implements HttpKernelInterface
@@ -57,7 +57,7 @@ class Scrawler implements HttpKernelInterface
 
         $this->base_dir = $base_dir;
         $this->init();
-        
+
         include __DIR__.'/helper.php';
     }
 
@@ -110,7 +110,11 @@ class Scrawler implements HttpKernelInterface
         $views = $this->base_dir.'/app/views';
         $cache = $this->base_dir.'/cache/templates';
 
-        $adapter = include($this->base_dir."/config/adapter.php");
+        $adapter_config = include($this->base_dir."/config/adapter.php");
+        $adapters = [];
+        foreach($adapter_config as $name=>$class){
+             $adapters[$name] = \DI\autowire($class); 
+        }
         $config = [
         'router'=> \DI\autowire(RouteCollection::class)
         ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
@@ -122,10 +126,11 @@ class Scrawler implements HttpKernelInterface
         'mail' => \DI\autowire(Mailer::class)->constructor(true),
         'template' => \DI\autowire(Template::class)->constructor($views, $cache),
         'module' => \DI\autowire(Module::class),
-        'filesystem' => \DI\autowire(Filesystem::class)->constructor(\DI\get('storageAdapter'))
+        'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('storageAdapter')),
+        'filesystem' => \DI\get('storage')
         ];
 
-        return array_merge($adapter, $config);
+        return array_merge($adapters, $config);
     }
 
 
@@ -156,8 +161,6 @@ class Scrawler implements HttpKernelInterface
             $arguments = $argumentResolver->getArguments($request, $controller);
             return $controller(...$arguments);
         });
-
-            //print_r( $controller(...$arguments));
 
 
             if (!$cresponse instanceof Response) {
