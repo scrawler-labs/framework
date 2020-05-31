@@ -39,68 +39,13 @@ class Scrawler implements HttpKernelInterface
     * Stores the request being processed
     */
     private $request;
-    /**
-     * Route Collection Object
-     */
-    private $routeCollection;
 
     /**
-     * Stores the event dispatcher object
+     * Store instance of container
+     *
+     * @object \DI\Container
      */
-    private $dispatcher;
-
-
-    /**
-     * Stores the module object
-     */
-    private $module;
-
-    /**
-     * Stores the database
-     */
-    private $db;
-
-    /**
-     * Stores cache object
-     */
-    private $cache;
-
-    /**
-     * Stores the configuration form config.ini
-     */
-    public $config;
-
-    /**
-     * Stores the template
-     */
-    private $template;
-
-
-    /**
-     * Stores the session
-     */
-    private $session;
-    
-
-    /**
-     * Stores the mailer
-     */
-    private $mailer;
-
-    /**
-     * Base directory of project
-     */
-    private $base_dir;
-
-    /**
-     * Stores object of pipeline
-     */
-    private $pipeline;
-
-    /**
-     * Stores filesystem object
-     */
-    private $filesystem;
+    private $container;
 
 
     /**
@@ -108,16 +53,24 @@ class Scrawler implements HttpKernelInterface
      */
     public function __construct($base_dir)
     {
-        $this->base_dir = $base_dir;
-        $this->config = include($this->base_dir."/config/app.php");
-        $this->config['general']['base_dir'] = $this->base_dir;
-        $this->config['adapter'] = include($this->base_dir."/config/adapter.php");
+        self::$scrawler = $this;
 
-        if ($this->config['general']['env'] == "dev") {
-            $this->registerWhoops();
-        }
+        $this->base_dir = $base_dir;
         $this->init();
+        
         include __DIR__.'/helper.php';
+    }
+
+    /**
+     * override call function to simulate backward compability
+     * 
+     *
+     * @since 2.2.x
+     * @return Object
+     */
+    public function __call($function, $args)
+    {
+        return $this->container->get($function);
     }
 
     /**
@@ -125,29 +78,19 @@ class Scrawler implements HttpKernelInterface
      */
     private function init()
     {
-        self::$scrawler = $this;
-
-        //Todo add database to travis  test env
-        if ($this->config['general']['env'] != "test") {
-            $this->db = new Database();
-        }
-
-        $this->routeCollection = new RouteCollection($this->base_dir.'/app/Controllers', 'App\Controllers');
-        $this->module = new Module();
-        $this->session  = new Session('kfenkfhcnbejd');
-        $this->mail = new Mailer(true);
-        $this->pipeline =  new Pipeline();
-        $this->dispatcher  = new EventDispatcher();
-
+        
+        $this->config = include($this->base_dir."/config/app.php");
+        $this->config['general']['base_dir'] = $this->base_dir;
+        $this->config['adapter'] = include($this->base_dir."/config/adapter.php");
         $this->config['general']['storage'] = $this->base_dir.'/storage';
 
-        $this->filesystem = new Filesystem($this->config['adapter']['filesystem']);
-        $this->cache = new Cache();
+        $builder = new \DI\ContainerBuilder();
+        $builder->addDefinitions($this->containerConfig());
+        $this->container = $builder->build();
 
-        //templateing engine
-        $views = $this->base_dir.'/app/views';
-        $cache = $this->base_dir.'/cache/templates';
-        $this->template = new Template($views, $cache);
+        if ($this->config['general']['env'] == "dev") {
+            $this->registerWhoops();
+        }
     }
 
     private function registerWhoops()
@@ -158,23 +101,51 @@ class Scrawler implements HttpKernelInterface
     }
 
     /**
+     * Configure DI Container
+     *
+     * @return array
+     */
+    private function containerConfig()
+    {
+        $views = $this->base_dir.'/app/views';
+        $cache = $this->base_dir.'/cache/templates';
+
+        $adapter = include($this->base_dir."/config/adapter.php");
+        $config = [
+        'router'=> \DI\autowire(RouteCollection::class)
+        ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
+        'db' => \DI\autowire(Database::class),
+        'session' => \DI\autowire(Session::class)->constructor('kfenkfhcnbejd'),
+        'pipeline' => \DI\autowire(Pipeline::class),
+        'dispatcher' =>  \DI\autowire(EventDispatcher::class),
+        'cache' => \DI\autowire(Cache::class),
+        'mail' => \DI\autowire(Mailer::class)->constructor(true),
+        'template' => \DI\autowire(Template::class)->constructor($views, $cache),
+        'module' => \DI\autowire(Module::class),
+        'filesystem' => \DI\autowire(Filesystem::class)->constructor(\DI\get('storageAdapter'))
+        ];
+
+        return array_merge($adapter, $config);
+    }
+
+
+    /**
      * Handle function
      */
     public function handle(\Symfony\Component\HttpFoundation\Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
         try {
             $this->request = $request;
-       
 
-            $cresponse = $this->pipeline->middleware([
+            $cresponse = $this->pipeline()->middleware([
             new \Scrawler\Middleware\Csrf(),
         ])
         ->run($this->request, function ($request) {
-            //$response = ;
+
             $controllerResolver = new ControllerResolver();
             $argumentResolver = new ArgumentResolver();
     
-            $engine = new RouterEngine($request, $this->routeCollection);
+            $engine = new RouterEngine($request, $this->router());
             $engine->route();
     
     
@@ -229,52 +200,6 @@ class Scrawler implements HttpKernelInterface
     }
 
 
-
-    /**
-     * returns the event dispatcher object
-     * @return Object EventDispatcher
-     */
-    public function &dispatcher()
-    {
-        return $this->dispatcher;
-    }
-
-    /**
-     * returns the filesystem object
-     * @return Object FileSystem
-     */
-    public function &filesystem()
-    {
-        return $this->filesystem;
-    }
-
-    /**
-     * returns cache object
-     * @return Object \Scrawler\Service\Cache
-     */
-    public function &cache()
-    {
-        return $this->cache;
-    }
-
-    /**
-     * Returns route collection object
-     * @return Object RouteCollection
-     */
-    public function &router()
-    {
-        return $this->routeCollection;
-    }
-
-    /**
-     * Returns session object
-     * @return Object RouteCollection
-     */
-    public function &session()
-    {
-        return $this->session;
-    }
-
     /**
      * Returns request object
      * @return Object Request
@@ -283,52 +208,6 @@ class Scrawler implements HttpKernelInterface
     {
         return $this->request;
     }
-
-    /**
-     * Returns module object
-     * @return Object \Scrawler\Service\Module
-     */
-    public function &module()
-    {
-        return $this->module;
-    }
-
-    /**
-     * Returns database object
-     * @return Object \Scrawler\Service\Database
-     */
-    public function &db()
-    {
-        return $this->db;
-    }
-    
-    /**
-     * Returns mailer object
-     * @return Object \Scrawler\Service\Mailer
-     */
-    public function &mailer()
-    {
-        return $this->mailer;
-    }
-
-    /**
-     * Returns templating engine object
-     * @return Object \Scrawler\Service\Template
-     */
-    public function &template()
-    {
-        return $this->template;
-    }
-
-    /**
-     * Returns pipeline object
-     * @return Object \Scrawler\Service\Pipeline
-     */
-    public function &pipeline()
-    {
-        return $this->pipeline;
-    }
-
 
     /**
      * Returns scrawler class object

@@ -17,7 +17,7 @@
         "eftec/bladeone": "^3.43",
         "phpmailer/phpmailer": "^6.1",
         "league/flysystem": "^1.0",
-        "cache/filesystem-adapter": "^1.0"
+        "php-di/php-di": "^6.1"
 
     },
     "autoload": {
