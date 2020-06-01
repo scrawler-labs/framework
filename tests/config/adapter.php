@@ -1,6 +1,7 @@
 <?php
-use League\Flysystem\Adapter\Local;
+use Scrawler\Adapters\StorageAdapter;
 
 return  [
-'filesystem' => new Local(__DIR__.'/../storage')
+'storageAdapter' => StorageAdapter::class,
+//'cache' => new Scrawler\Adapters\FileCache()
 ];
