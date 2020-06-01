@@ -44,4 +44,8 @@ class Storage extends \League\Flysystem\Filesystem
         $this->write($path.$filename, $content);
         return $path.$filename;
     }
+
+    public function getUrl($path){
+       return $this->getAdapter()->getUrl($path);
+    }
 }

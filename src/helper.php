@@ -135,6 +135,16 @@ if (! function_exists('view')) {
         }
     }
 
+    /**
+     * helper function to get file url
+     */
+    if (! function_exists('storage')) {
+        function storage($path)
+        {
+            return Scrawler::engine()->storage()->getUrl($path);      
+        }
+    }
+
    
 
 
