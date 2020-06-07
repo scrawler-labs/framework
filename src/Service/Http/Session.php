@@ -111,7 +111,7 @@ class Session
      */
     public function destroy($session_id)
     {
-        $session = $this->db->find('session', 'sessionid  LIKE ?', [$session_id]);
+        $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$session_id]);
         $this->db->delete($session);
         return true;
     }
