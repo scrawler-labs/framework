@@ -11,6 +11,7 @@ namespace Scrawler\Service;
 use Scrawler\Scrawler;
 use RedBeanPHP\Finder;
 use RedBeanPHP\OODBBean;
+use RedBeanPHP\R as R;
 
 class Database
 {
@@ -22,8 +23,8 @@ class Database
      */
     public function __construct()
     {
-        \R::setup('mysql:host='.Scrawler::engine()->config['database']['host'].';dbname='.Scrawler::engine()->config['database']['database'], Scrawler::engine()->config['database']['username'], Scrawler::engine()->config['database']['password']);
-        $t = \R::getToolBox();
+        R::setup('mysql:host='.Scrawler::engine()->config['database']['host'].';dbname='.Scrawler::engine()->config['database']['database'], Scrawler::engine()->config['database']['username'], Scrawler::engine()->config['database']['password']);
+        $t = R::getToolBox();
         $this->toolbox = $t->getRedBean();
         $this->finder = new Finder($t);
     }
