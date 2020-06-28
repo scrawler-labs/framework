@@ -17,19 +17,21 @@
         "eftec/bladeone": "^3.43",
         "phpmailer/phpmailer": "^6.1",
         "league/flysystem": "^1.0",
-        "php-di/php-di": "^6.1"
+        "php-di/php-di": "^6.1",
+        "scrawler/database": "^5.5"
 
     },
     "autoload": {
        "psr-4": {
          "Scrawler\\": "src/"
-       },
-       "files": ["src/rb-mysql.php"]
+       }
    },
    "autoload-dev": {
     "psr-4": {
         "Tests\\": "tests/"
     }
-}
-   
+},
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.31"
+    }
 }
