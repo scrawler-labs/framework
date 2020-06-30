@@ -38,7 +38,7 @@ Class DatabaseHandler extends AbstractSessionHandler
             $session = $this->db->create('session');
         }
         $session->sessionid = $sessionId;
-        $session->session_data = $session_data;
+        $session->session_data = $data;
         $session->session_expire = time() + $maxlifetime;
         $this->db->save($session);
         return true;
