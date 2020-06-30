@@ -72,7 +72,7 @@ class Scrawler implements HttpKernelInterface
         $this->base_dir = $base_dir;
         $this->init();
 
-        include_once './helper.php';
+        include __DIR__.'/helper.php';
     }
 
     /**
@@ -132,7 +132,7 @@ class Scrawler implements HttpKernelInterface
         'router'=> \DI\autowire(RouteCollection::class)
         ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
         'db' => \DI\autowire(Database::class),
-        'session' => \DI\autowire(Session::class)->constructor('kfenkfhcnbejd'),
+        'session' => \DI\autowire(Session::class)->constructor(\DI\get('sessionAdapter')),
         'pipeline' => \DI\autowire(Pipeline::class),
         'dispatcher' =>  \DI\autowire(EventDispatcher::class),
         'cache' => \DI\autowire(Cache::class),

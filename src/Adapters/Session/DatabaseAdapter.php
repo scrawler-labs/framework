@@ -8,6 +8,7 @@
 namespace Scrawler\Adapters\Session;
 
 use Scrawler\Scrawler;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 Class DatabaseAdapter extends NativeSessionStorage {
 
