@@ -75,7 +75,7 @@ if (! function_exists('view')) {
             Scrawler::engine()->session()->start();
             if($value == NULL){
                 return Scrawler::engine()->session()->$key;
-            }else{
+            } else{
                 Scrawler::engine()->session()->$key = $value;
             }
         }
@@ -90,7 +90,7 @@ if (! function_exists('view')) {
             Scrawler::engine()->session()->start();
             if($value == NULL){
                 return Scrawler::engine()->session()->flash($key);
-            }else{
+            } else{
                 Scrawler::engine()->session()->flash($key,$value);
             }
         }
@@ -114,11 +114,13 @@ if (! function_exists('view')) {
         function csrf_check()
         {
             Scrawler::engine()->session()->start();
-            if(!Scrawler::engine()->session()->isset('csrf_token'))
-            return false;
+            if(!Scrawler::engine()->session()->isset('csrf_token')) {
+                        return false;
+            }
 
-            if (hash_equals(Scrawler::engine()->session()->flash('csrf_token'), Scrawler::engine()->request()->csrf_token))
-            return true;
+            if (hash_equals(Scrawler::engine()->session()->flash('csrf_token'), Scrawler::engine()->request()->csrf_token)) {
+                        return true;
+            }
 
             return false;
         }
