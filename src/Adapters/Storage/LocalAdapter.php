@@ -1,4 +1,10 @@
 <?php
+/**
+ * Adapter for storing in local filesystem
+ *
+ * @package: Scrawler
+ * @author: Pranjal Pandey
+ */
 namespace Scrawler\Adapters\Storage;
 
 use Scrawler\Scrawler;
