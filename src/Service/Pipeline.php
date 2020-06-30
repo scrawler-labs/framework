@@ -8,9 +8,10 @@
 namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
+use InvalidArgumentException;
 use Scrawler\Interfaces\MiddlewareInterface;
 
-class Pipeline{
+final class Pipeline{
 
     private $middlewares;
 
@@ -22,7 +23,7 @@ class Pipeline{
     /**
      * Add middleware(s) or Pipeline
      * @param  mixed $middlewares
-     * @return Pipelinee
+     * @return Pipeline
      */
     public function middleware($middlewares)
     {
@@ -45,10 +46,10 @@ class Pipeline{
      * Run middleware around core function and pass an
      * object through it
      * @param  mixed  $object
-     * @param  Closure $core
+     * @param  \Closure $core
      * @return mixed         
      */
-    public function run($object, \Closure $core)
+    public function run($object, $core)
     {
         $coreFunction = $this->createCoreFunction($core);
 
@@ -82,8 +83,8 @@ class Pipeline{
     /**
      * The inner function of the onion.
      * This function will be wrapped on layers
-     * @param  Closure $core the core function
-     * @return Closure
+     * @param  \Closure $core the core function
+     * @return \Closure
      */
     private function createCoreFunction(\Closure $core)
     {
@@ -97,7 +98,7 @@ class Pipeline{
      * This function will get the object from a previous layer and pass it inwards
      * @param  MiddlewareInterface $nextMiddleware
      * @param  MiddlewareInterface $middleware
-     * @return Closure
+     * @return \Closure
      */
     private function createMiddleware($nextMiddleware, $middleware)
     {

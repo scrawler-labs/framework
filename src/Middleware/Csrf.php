@@ -7,7 +7,7 @@ use \Closure;
 
 Class Csrf implements MiddlewareInterface
 {
-    public function run($request, Closure $next){
+    public function run($request, $next){
         if ($request->getMethod() == 'POST' && $request->request->has('csrf_token')) {
             if (!csrf_check()) {
                 throw new \Exception('CSRF token mismatch');

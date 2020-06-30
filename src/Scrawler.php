@@ -28,6 +28,10 @@ use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
+/**
+ *  @method mixed pipeline()
+ *  @method mixed router()
+ */
 class Scrawler implements HttpKernelInterface
 {
     /**
@@ -47,6 +51,16 @@ class Scrawler implements HttpKernelInterface
      */
     private $container;
 
+    /**
+     * Stores the base directory of scrawler project
+     */
+    private $base_dir;
+
+    /**
+     * Stores Scrawler Configurations
+     */
+    public $config;
+
 
     /**
      * Initialize all the needed functionalities
@@ -64,7 +78,6 @@ class Scrawler implements HttpKernelInterface
     /**
      * override call function to simulate backward compability
      * 
-     *
      * @since 2.2.x
      * @return Object
      */
@@ -152,12 +165,9 @@ class Scrawler implements HttpKernelInterface
     
             $engine = new RouterEngine($request, $this->router());
             $engine->route();
-    
-    
-            if (false === $controller =$controllerResolver->getController($request)) {
-                throw new NotFoundHttpException(sprintf('Unable to find the controller for path "%s". The route is wrongly configured.', $request->getPathInfo()));
-            }
-    
+        
+            $controller = $controllerResolver->getController($request);
+
             $arguments = $argumentResolver->getArguments($request, $controller);
             return $controller(...$arguments);
         });

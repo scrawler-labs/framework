@@ -8,7 +8,7 @@
  */
 namespace Scrawler;
 
-use R;
+use RedBeanPHP\R;
 
 Class Slim
 {
@@ -30,11 +30,10 @@ Class Slim
     /**
      * Initialization tasks
      */
-    public function __construct()
+    public function __construct($base_dir)
     {
 
-        $this->base_dir = dirname(\Composer\Factory::getComposerFile());
-        $sconfig = parse_ini_file($this->base_dir."/config/app.ini",true);
+        $config = parse_ini_file($base_dir."/config/app.ini",true);
         R::setup('mysql:host='.$config['database']['host'].';dbname='.$config['database']['database'], $config['database']['username'], $config['database']['password']);
         $this->path_info = explode('/', $_SERVER['REQUEST_URI']);
         array_shift($this->path_info);
@@ -63,7 +62,7 @@ Class Slim
     /**
      * Function to send back response from slim mode
      *
-     * @return json response json
+     * @return string response json
      */
     public function dispatch()
     {
@@ -83,6 +82,7 @@ Class Slim
             $this->delete();
             return json_encode(['sucess'=> 'delete query executed' ]);
         }
+        return \json_encode([]);
     }
 
     /**
@@ -104,15 +104,14 @@ Class Slim
      */
     private function post()
     {
+        
         if (count($this->path_info)==3 && $this->path_info[2] == 'find') {
             return $this->find();
         }
 
         if (count($this->path_info)==3) {
             $model = R::load($this->model, $this->path_info[2]);
-        }
-
-        if (count($this->path_info)==2) {
+        }else{
             $model = R::dispense($this->model);
         }
            

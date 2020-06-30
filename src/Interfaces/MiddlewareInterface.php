@@ -5,6 +5,11 @@ namespace Scrawler\Interfaces;
 use \Closure;
 
 interface MiddlewareInterface
-{
-    public function run($request, Closure $next);
+{   
+    /** 
+    * @param  \Scrawler\Service\Http\Request  $request
+    * @param  mixed $next
+    * @return mixed         
+    */
+    public function run($request, $next);
 }

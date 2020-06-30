@@ -9,9 +9,37 @@
 namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
+use Scrawler\Interfaces\StorageInterface;
 
 class Storage extends \League\Flysystem\Filesystem
 {
+    /**
+     * @var StorageInterface
+     */
+    protected $adapter;
+
+    /**
+     * Constructor.
+     *
+     * @param StorageInterface $adapter
+     * @param \League\Flysystem\Config|array     $config
+     */
+    public function __construct(StorageInterface $adapter, $config = null)
+    {
+        parent::__construct($adapter,$config);
+    }
+
+    /**
+     * Get the Adapter.
+     *
+     * @return StorageInterface adapter
+     */
+    public function getAdapter()
+    {
+        return $this->adapter;
+    }
+
+
   
       /**
        * Stores the files in request to  specific path

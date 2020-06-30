@@ -1,0 +1,4 @@
+parameters:
+	checkMissingIterableValueType: false
+	autoload_files:
+		- vendor/autoload.php

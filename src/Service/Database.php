@@ -11,7 +11,7 @@ namespace Scrawler\Service;
 use Scrawler\Scrawler;
 use RedBeanPHP\Finder;
 use RedBeanPHP\OODBBean;
-use RedBeanPHP\R as R;
+use RedBeanPHP\R;
 
 class Database
 {
@@ -70,7 +70,7 @@ class Database
                 return $this->finder->find($arguments[0], null, []);
             }
         }
-        return \R::__callStatic($name, $arguments);
+        return R::__callStatic($name, $arguments);
     }
     
     /**
@@ -83,7 +83,7 @@ class Database
      */
     public function getForUpdate(String $table, int $id)
     {
-        return \R::loadForUpdate($table, $id);
+        return R::loadForUpdate($table, $id);
     }
 
     /**
@@ -93,7 +93,7 @@ class Database
      */
     public function delete(OODBBean $model)
     {
-        return $this->toolbox->trash($model);
+         $this->toolbox->trash($model);
     }
 
     /**
@@ -104,7 +104,7 @@ class Database
      */
     public function deleteAll(String $table)
     {
-        return $this->toolbox->trashAll($table);
+         $this->toolbox->trashAll($table);
     }
 
     /**
@@ -123,7 +123,7 @@ class Database
     /**
      * Find and return single record
      *
-     * @param String $model
+     * @param String $table
      * @param String $query
      * @param array $values
      * @return OODBBean
@@ -138,7 +138,7 @@ class Database
      * and saves it.
      *
      * @param OODBBean|String $model
-     * @return void
+     * @return int $id 
      */
     public function saveRequest($model)
     {
@@ -158,7 +158,7 @@ class Database
      * Bind all value from incoming request to model (aka bean)
      *
      * @param OODBBean|String $model
-     * @return void
+     * @return OODBBean
      */
     public function bindRequest($model)
     {
