@@ -72,7 +72,9 @@ class Scrawler implements HttpKernelInterface
         $this->base_dir = $base_dir;
         $this->init();
 
-        include __DIR__.'/helper.php';
+        $helpers = dirname(__DIR__).DIRECTORY_SEPARATOR.'helper.php';
+
+        include_once $helpers;
     }
 
     /**
