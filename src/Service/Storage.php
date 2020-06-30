@@ -26,7 +26,7 @@ class Storage extends \League\Flysystem\Filesystem
      */
     public function __construct(StorageInterface $adapter, $config = null)
     {
-        parent::__construct($adapter,$config);
+        parent::__construct($adapter, $config);
     }
 
     /**
@@ -41,39 +41,41 @@ class Storage extends \League\Flysystem\Filesystem
 
 
   
-      /**
-       * Stores the files in request to  specific path
-       *
-       * @param string $path
-       * @return array path
-       */
+    /**
+     * Stores the files in request to  specific path
+     *
+     * @param string $path
+     * @return array path
+     */
     public function saveRequest(String $path='')
     {
         $uploaded = [];
         $files= Scrawler::engine()->request()->files->all();
         foreach ($files as $name => $file) {
-            if(\is_array($file)){
+            if (\is_array($file)) {
                 $paths=[];
-             foreach($file as $single){
-                $filepath =  $this->writeRequest($single,$path);
-                array_push($paths,$filepath);
-             }
-               $uploaded[$name] = $paths;
-            }else{
-                $uploaded[$name]  = $this->writeRequest($file,$path);
+                foreach ($file as $single) {
+                    $filepath =  $this->writeRequest($single, $path);
+                    array_push($paths, $filepath);
+                }
+                $uploaded[$name] = $paths;
+            } else {
+                $uploaded[$name]  = $this->writeRequest($file, $path);
             }
         }
         return $uploaded;
     }
 
-    private function writeRequest($file,$path=''){
+    private function writeRequest($file, $path='')
+    {
         $content = file_get_contents($file->getPathname());
         $filename=md5($file->getClientOriginalName()).uniqid().'.'.$file->getClientOriginalExtension();
         $this->write($path.$filename, $content);
         return $path.$filename;
     }
 
-    public function getUrl($path){
-       return $this->getAdapter()->getUrl($path);
+    public function getUrl($path)
+    {
+        return $this->getAdapter()->getUrl($path);
     }
 }
