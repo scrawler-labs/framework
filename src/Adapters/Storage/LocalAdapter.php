@@ -1,11 +1,11 @@
 <?php
-namespace Scrawler\Adapters;
+namespace Scrawler\Adapters\Storage;
 
 use Scrawler\Scrawler;
 use Scrawler\Interfaces\StorageInterface;
 use League\Flysystem\Adapter\Local;
 
-class StorageAdapter extends Local implements StorageInterface{
+class LocalAdapter extends Local implements StorageInterface{
 
    function __construct(){
        parent::__construct(\Scrawler\Scrawler::engine()->config['general']['storage']);
