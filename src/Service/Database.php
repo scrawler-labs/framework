@@ -99,12 +99,12 @@ class Database
     /**
      * delete all records from table
      *
-     * @param String $table
+     * @param array $models
      * @return void
      */
-    public function deleteAll(String $table)
+    public function deleteAll($models)
     {
-         $this->toolbox->trashAll($table);
+         $this->toolbox->trashAll($models);
     }
 
     /**

@@ -15,7 +15,7 @@ Class DatabaseHandler extends AbstractSessionHandler
     /**
      * Store Database instance
      *
-     * @var Scrawler\Service\Database
+     * @var \Scrawler\Service\Database
      */    
     private $db;
 
