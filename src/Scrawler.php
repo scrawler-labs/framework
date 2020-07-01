@@ -26,7 +26,6 @@ use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 
 /**
  *  @method mixed pipeline()

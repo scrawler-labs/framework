@@ -93,7 +93,7 @@ class Database
      */
     public function delete(OODBBean $model)
     {
-         $this->toolbox->trash($model);
+        $this->toolbox->trash($model);
     }
 
     /**
@@ -104,14 +104,16 @@ class Database
      */
     public function deleteAll($models)
     {
-         $this->toolbox->trashAll($models);
+        foreach ($models as $model) {
+            $this->delete($model);
+        }
     }
 
     /**
      * Find and returns array of records
      *
-     * @param String $table
-     * @param String $query
+     * @param string $table
+     * @param string $query
      * @param array $values
      * @return array
      */
@@ -123,14 +125,27 @@ class Database
     /**
      * Find and return single record
      *
-     * @param String $table
-     * @param String $query
+     * @param string $table
+     * @param string $query
      * @param array $values
      * @return OODBBean
      */
-    public function findOne(String $table, String $query, $values=[])
+    public function findOne(string $table, string $query, $values=[])
     {
         return $this->finder->findOne($table, $query, $values);
+    }
+
+    /**
+     * Find and return single record
+     *
+     * @param string $table
+     * @param string $query
+     * @param array $values
+     * @return OODBBean
+     */
+    public function findOrLoad($table, $query = null, $values = [])
+    {
+        return $this->finder->findOrDispense($table, $query, $values);
     }
 
     /**
@@ -138,7 +153,7 @@ class Database
      * and saves it.
      *
      * @param OODBBean|String $model
-     * @return int $id 
+     * @return int $id
      */
     public function saveRequest($model)
     {

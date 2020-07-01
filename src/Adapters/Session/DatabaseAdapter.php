@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 Class DatabaseAdapter extends NativeSessionStorage {
 
-   function __construct(){
+   public function __construct(){
        parent::__construct([],new DatabaseHandler);
    }
 

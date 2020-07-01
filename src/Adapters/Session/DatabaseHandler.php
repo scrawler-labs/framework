@@ -27,7 +27,7 @@ Class DatabaseHandler extends AbstractSessionHandler
     private $gcCalled = false;
 
 
-    function __construct(){
+    public function __construct(){
         $this->db = Scrawler::engine()->db();
     }
 
