@@ -10,18 +10,30 @@ namespace Scrawler\Service\Http;
 
 use Scrawler\Scrawler;
 
-Class Request extends \Symfony\Component\HttpFoundation\Request{
+class Request extends \Symfony\Component\HttpFoundation\Request
+{
+    /**
+     * Magic method $_POST $_GET to get value from key 
+     *
+     * @param string $key
+     * @return string
+     */
+    public function __get($key)
+    {
+        $value = $this->request->get($key);
+        if ($value == '') {
+            $value = $this->query->get($key);
+        }
+        return $value;
+    }
 
-   function __get($key){
-       $value = $this->request->get($key);
-       if($value == ''){
-       $value = $this->query->get($key);
-       }  
-      return $value;
-   }
-
-   function all(){
-       return array_merge($this->request->all(),$this->query->all());
-   }
-
+    /**
+     * Get all property of request
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return array_merge($this->request->all(), $this->query->all());
+    }
 }

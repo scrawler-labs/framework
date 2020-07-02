@@ -44,7 +44,7 @@ class Database
      * Saves the model to the database
      *
      * @param OODBBean $model
-     * @return int $id of stored record
+     * @return int|string $id of stored record
      */
     public function save(OODBBean $model)
     {
@@ -141,7 +141,7 @@ class Database
      * @param string $table
      * @param string $query
      * @param array $values
-     * @return OODBBean
+     * @return array|array<integer,RedBeanPHP\OODBBean>
      */
     public function findOrLoad($table, $query = null, $values = [])
     {
@@ -153,7 +153,7 @@ class Database
      * and saves it.
      *
      * @param OODBBean|String $model
-     * @return int $id
+     * @return int|string $id
      */
     public function saveRequest($model)
     {

@@ -17,7 +17,7 @@ class Module
     private $modules;
 
     /**
-     * Directory of module curentttly being registered
+     * Directory of module curently being registered
      */
     private $dir;
 
@@ -52,10 +52,12 @@ class Module
     {
         Scrawler::engine()->router()->registerDir($name);
         $directory = $this->dir.'/Controllers';
-        $files = array_slice(scandir($directory),2);
-        foreach ($files as $file) {
-            if ($file != 'Main.php' && !is_dir($directory.'/'.$file)) {
-                Scrawler::engine()->router()->registerController($name.'/'.\basename($file, '.php'),$namespace.'\\Controllers\\'.\basename($file, '.php'));
+        if ($scan = scandir($directory)) {
+            $files = array_slice($scan, 2);
+            foreach ($files as $file) {
+                if ($file != 'Main.php' && !is_dir($directory.'/'.$file)) {
+                    Scrawler::engine()->router()->registerController($name.'/'.\basename($file, '.php'), $namespace.'\\Controllers\\'.\basename($file, '.php'));
+                }
             }
         }
     }
