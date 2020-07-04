@@ -60,6 +60,11 @@ class Scrawler implements HttpKernelInterface
      */
     public $config;
 
+    /**
+     * Scrawler version
+     */
+    const VERSION = '2.3.0';
+
 
     /**
      * Initialize all the needed functionalities
@@ -228,5 +233,14 @@ class Scrawler implements HttpKernelInterface
     public static function &engine()
     {
         return self::$scrawler;
+    }
+
+    /**
+     * Returns scrawler version
+     *
+     * @return string
+     */
+    public function getVersion(){
+        return static::VERSION;
     }
 }

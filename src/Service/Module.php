@@ -34,16 +34,16 @@ class Module
     /**
      * Load from registerd modules
      */
-    public function load($name)
-    {
-        if(isset($this->modules[$name])){
-            if(is_object($this->modules[$name])){
-                return $this->modules[$name];
-            }
-            $this->modules[$name] = new $this->modules[$name]();
-            return $this->modules[$name];
-        }
-    }
+    // public function load($name)
+    // {
+    //     if(isset($this->modules[$name])){
+    //         if(is_object($this->modules[$name])){
+    //             return $this->modules[$name];
+    //         }
+    //         $this->modules[$name] = new $this->modules[$name]();
+    //         return $this->modules[$name];
+    //     }
+    // }
 
     /**
      * Register routes of module
