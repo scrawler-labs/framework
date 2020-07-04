@@ -32,6 +32,7 @@
     }
 },
     "require-dev": {
-        "phpstan/phpstan": "^0.12.31"
+        "phpstan/phpstan": "^0.12.31",
+        "php-coveralls/php-coveralls": "^2.2"
     }
 }
