@@ -77,7 +77,7 @@ class Scrawler implements HttpKernelInterface
 
     /**
      * override call function to simulate backward compability
-     * 
+     *
      * @since 2.2.x
      * @return Object
      */
@@ -91,7 +91,6 @@ class Scrawler implements HttpKernelInterface
      */
     private function init()
     {
-        
         $this->config = include($this->base_dir."/config/app.php");
         $this->config['general']['base_dir'] = $this->base_dir;
         $this->config['adapter'] = include($this->base_dir."/config/adapter.php");
@@ -125,8 +124,8 @@ class Scrawler implements HttpKernelInterface
 
         $adapter_config = include($this->base_dir."/config/adapter.php");
         $adapters = [];
-        foreach($adapter_config as $name=>$class){
-             $adapters[$name] = \DI\autowire($class); 
+        foreach ($adapter_config as $name=>$class) {
+            $adapters[$name] = \DI\autowire($class);
         }
         $config = [
         'router'=> \DI\autowire(RouteCollection::class)
@@ -157,12 +156,11 @@ class Scrawler implements HttpKernelInterface
 
             $middlewares = include($this->base_dir.'/app/Middlewares/kernel.php');
 
-            $cresponse = $this->pipeline()->middleware([
+            $response = $this->pipeline()->middleware([
             \Scrawler\Middleware\Csrf::class,
             ...$middlewares
         ])
         ->run($this->request, function ($request) {
-
             $controllerResolver = new ControllerResolver();
             $argumentResolver = new ArgumentResolver();
     
@@ -172,22 +170,11 @@ class Scrawler implements HttpKernelInterface
             $controller = $controllerResolver->getController($request);
 
             $arguments = $argumentResolver->getArguments($request, $controller);
-            return $controller(...$arguments);
+            return $this->makeResponse($controller(...$arguments));
         });
 
 
-            if (!$cresponse instanceof Response) {
-                $response = new Response(
-                    'Content',
-                    Response::HTTP_OK,
-                    ['content-type' => 'text/html']
-                );
-                $response->setContent($cresponse);
-            } else {
-                $response = $cresponse;
-            }
-
-            return $response;
+            return $this->makeResponse($response);
         } catch (\Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -213,6 +200,24 @@ class Scrawler implements HttpKernelInterface
           
             return  $response;
         }
+    }
+
+    /**
+     * Make sure the content is a reponse object
+     * @return Object Response
+     */
+    private function makeResponse($content)
+    {
+        if (!$content instanceof Response) {
+            $response = new Response(
+                $content,
+                Response::HTTP_OK,
+                ['content-type' => 'text/html']
+            );
+        } else {
+            $response = $content;
+        }
+        return $response;
     }
 
 
