@@ -103,6 +103,9 @@ final class Pipeline{
     private function createMiddleware($nextMiddleware, $middleware)
     {
         return function($object) use($nextMiddleware, $middleware){
+            if(is_string($middleware)){
+               $middleware = new $middleware;
+            }
             return $middleware->run($object, $nextMiddleware);
         };
     }
