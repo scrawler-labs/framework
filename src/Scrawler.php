@@ -26,6 +26,7 @@ use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 /**
  *  @method mixed pipeline()
@@ -59,11 +60,6 @@ class Scrawler implements HttpKernelInterface
      * Stores Scrawler Configurations
      */
     public $config;
-
-    /**
-     * Scrawler version
-     */
-    const VERSION = '2.3.0';
 
 
     /**
@@ -159,8 +155,11 @@ class Scrawler implements HttpKernelInterface
         try {
             $this->request = $request;
 
+            $middlewares = include($this->base_dir.'/app/Middlewares/kernel.php');
+
             $cresponse = $this->pipeline()->middleware([
-            new \Scrawler\Middleware\Csrf(),
+            \Scrawler\Middleware\Csrf::class,
+            ...$middlewares
         ])
         ->run($this->request, function ($request) {
 
@@ -233,14 +232,5 @@ class Scrawler implements HttpKernelInterface
     public static function &engine()
     {
         return self::$scrawler;
-    }
-
-    /**
-     * Returns scrawler version
-     *
-     * @return string
-     */
-    public function getVersion(){
-        return static::VERSION;
     }
 }
