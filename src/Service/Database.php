@@ -23,7 +23,8 @@ class Database
      */
     public function __construct()
     {
-        R::setup('mysql:host='.Scrawler::engine()->config['database']['host'].';dbname='.Scrawler::engine()->config['database']['database'], Scrawler::engine()->config['database']['username'], Scrawler::engine()->config['database']['password']);
+        $config=Scrawler::engine()->config()->all();
+        R::setup('mysql:host='.$config['database']['host'].';dbname='.$config['database']['database'], $config['database']['username'], $config['database']['password']);
         $t = R::getToolBox();
         $this->toolbox = $t->getRedBean();
         $this->finder = new Finder($t);

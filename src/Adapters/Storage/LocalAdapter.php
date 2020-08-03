@@ -14,7 +14,7 @@ use League\Flysystem\Adapter\Local;
 class LocalAdapter extends Local implements StorageInterface{
 
    public function __construct(){
-       parent::__construct(\Scrawler\Scrawler::engine()->config['general']['storage']);
+       parent::__construct(\Scrawler\Scrawler::engine()->config()->get('general.storage'));
    }
 
    public function getUrl($path){

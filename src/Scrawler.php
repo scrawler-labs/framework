@@ -27,6 +27,8 @@ use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Noodlehaus\Config;
+
 
 /**
  *  @method mixed pipeline()
@@ -56,10 +58,6 @@ class Scrawler implements HttpKernelInterface
      */
     private $base_dir;
 
-    /**
-     * Stores Scrawler Configurations
-     */
-    public $config;
 
 
     /**
@@ -91,16 +89,15 @@ class Scrawler implements HttpKernelInterface
      */
     private function init()
     {
-        $this->config = include($this->base_dir."/config/app.php");
-        $this->config['general']['base_dir'] = $this->base_dir;
-        $this->config['adapter'] = include($this->base_dir."/config/adapter.php");
-        $this->config['general']['storage'] = $this->base_dir.'/storage';
+
 
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions($this->containerConfig());
         $this->container = $builder->build();
+        $this->config()->set('general.base_dir',$this->base_dir);
+        $this->config()->set('general.storage', $this->base_dir.'/storage');
 
-        if ($this->config['general']['env'] == "dev") {
+        if ($this->config()->get('general.env') == "dev") {
             $this->registerWhoops();
         }
     }
@@ -128,6 +125,7 @@ class Scrawler implements HttpKernelInterface
             $adapters[$name] = \DI\autowire($class);
         }
         $config = [
+        'config' => \DI\autowire(Config::class)->constructor($this->base_dir.'/config'),
         'router'=> \DI\autowire(RouteCollection::class)
         ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
         'db' => \DI\autowire(Database::class),
@@ -139,7 +137,8 @@ class Scrawler implements HttpKernelInterface
         'template' => \DI\autowire(Template::class)->constructor($views, $cache),
         'module' => \DI\autowire(Module::class),
         'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('storageAdapter')),
-        'filesystem' => \DI\get('storage')
+        'filesystem' => \DI\get('storage'),
+
         ];
 
         return array_merge($adapters, $config);
@@ -154,7 +153,7 @@ class Scrawler implements HttpKernelInterface
         try {
             $this->request = $request;
 
-            $middlewares = include($this->base_dir.'/app/Middlewares/kernel.php');
+            $middlewares = $this->config()->get('middlewares');
 
             $response = $this->pipeline()->middleware([
             \Scrawler\Middleware\Csrf::class,
@@ -187,7 +186,7 @@ class Scrawler implements HttpKernelInterface
     {
         $response =  new Response();
 
-        if ($this->config['general']['env']!='prod') {
+        if ($this->config()->get('general.env')!='prod') {
             throw $e;
         } else {
             if ($e instanceof \Scrawler\Router\NotFoundException) {
