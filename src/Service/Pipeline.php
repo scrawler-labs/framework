@@ -96,8 +96,8 @@ final class Pipeline{
     /**
      * Get an pipeline middleware function.
      * This function will get the object from a previous layer and pass it inwards
-     * @param  MiddlewareInterface $nextMiddleware
-     * @param  MiddlewareInterface $middleware
+     * @param  MiddlewareInterface|String $nextMiddleware
+     * @param  MiddlewareInterface|String $middleware
      * @return \Closure
      */
     private function createMiddleware($nextMiddleware, $middleware)

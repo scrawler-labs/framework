@@ -15,7 +15,7 @@ use PHPMailer\PHPMailer\Exception;
 
 Class Mailer extends PHPMailer{
 
-    function __construct(){
+    public function __construct(){
 
         $config = Scrawler::engine()->config()->all();
         if(Scrawler::engine()->config()->get('general.env')=='prod')
@@ -36,7 +36,7 @@ Class Mailer extends PHPMailer{
         $this->Port = $config['mailer']['port'];                         // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
     }
 
-    function __set($key,$value){
+    public function __set($key,$value){
         if($key == 'from'){
             $this->setFrom($value);
         }

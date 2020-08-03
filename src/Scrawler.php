@@ -26,13 +26,13 @@ use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Noodlehaus\Config;
 
 
 /**
  *  @method mixed pipeline()
  *  @method mixed router()
+ *  @method mixed config()
  */
 class Scrawler implements HttpKernelInterface
 {
