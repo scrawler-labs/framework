@@ -15,6 +15,18 @@ if (! function_exists('s')) {
 }
 
 /**
+ * Helper function to return instance of scrawler
+ *
+ * @return Object \Scrawler\Scrawler
+ */
+if (! function_exists('app')) {
+    function app()
+    {
+        return Scrawler::engine();
+    }
+}
+
+/**
  * Render template  from template engine
  *
  * @return String rendered body
@@ -150,6 +162,15 @@ if (! function_exists('view')) {
         }
     }
 
+    /**
+     * helper function to get db model
+     */
+    if (! function_exists('model')) {
+        function model($model)
+        {
+            return Scrawler::engine()->db()->create($model);      
+        }
+    }
    
 
 
