@@ -24,15 +24,21 @@ class Cache
     private $location;
 
     /**
+     *  Stores Config
+     */
+    private $config;
+
+    /**
      * Constructor overload
      */
     public function __construct()
     {
-        if (Scrawler::engine()->config['memcahe']['enabled']) {
+        $this->config = Scrawler::engine()->config()->all();
+        if ($this->config['memcahe']['enabled']) {
             $this->memcache = new \Memcached();
-            $this->memcache->addServer(Scrawler::engine()->config['memcahe']['host'], Scrawler::engine()->config['memcahe']['port']);
+            $this->memcache->addServer($this->config['memcahe']['host'], $this->config['memcahe']['port']);
         }
-        $this->location = __DIR__.'/../../cache/core/';
+        $this->location = Scrawler::engine()->config()->get('general.base_dir').'/../../cache/core/';
     }
 
     /**
@@ -49,7 +55,7 @@ class Cache
             return file_put_contents($this->location.$key.'.cache', serialize($value));
         }
 
-        if ($type == 'memory' &&  Scrawler::engine()->config['memcahe']['enabled']) {
+        if ($type == 'memory' &&  $this->config['memcahe']['enabled']) {
             return $this->memcache->set($key, $value);
         }
 
@@ -65,7 +71,7 @@ class Cache
      */
     public function get($key, $type = 'file')
     {
-        if ($type == 'memory' && Scrawler::engine()->config['memcahe']['enabled']) {
+        if ($type == 'memory' && $this->config['memcahe']['enabled']) {
             return $this->memcache->get($key);
         }
 
