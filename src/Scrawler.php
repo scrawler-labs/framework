@@ -133,7 +133,7 @@ class Scrawler implements HttpKernelInterface
         'pipeline' => \DI\autowire(Pipeline::class),
         'dispatcher' =>  \DI\autowire(EventDispatcher::class),
         'cache' => \DI\autowire(Cache::class),
-        'mail' => \DI\autowire(Mailer::class)->constructor(true),
+        'mail' => \DI\autowire(Mailer::class),
         'template' => \DI\autowire(Template::class)->constructor($views, $cache),
         'module' => \DI\autowire(Module::class),
         'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('storageAdapter')),

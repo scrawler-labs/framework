@@ -15,18 +15,25 @@ use PHPMailer\PHPMailer\Exception;
 
 Class Mailer extends PHPMailer{
 
-    function __construct($exception){
+    function __construct(){
+
+        $config = Scrawler::engine()->config()->all();
+        if(Scrawler::engine()->config()->get('general.env')=='prod')
+        $exception = false;
+        else
+        $exception = true;
+
         parent::__construct($exception);
         $this->SMTPDebug = SMTP::DEBUG_SERVER;                                              // Enable verbose debug output
         $this->isSMTP();                                                                    // Send using SMTP
-        $this->Host = Scrawler::engine()->config['mailer']['host'];                         // Set the SMTP server to send through
+        $this->Host = $config['mailer']['host'];                         // Set the SMTP server to send through
         $this->SMTPAuth = true;                                                             // Enable SMTP authentication
-        $this->Username = Scrawler::engine()->config['mailer']['username'];                 // SMTP username
-        $this->Password = Scrawler::engine()->config['mailer']['password'];                 // SMTP password
-        if (Scrawler::engine()->config['mailer']['secure']) {
+        $this->Username = $config['mailer']['username'];                 // SMTP username
+        $this->Password = $config['mailer']['password'];                 // SMTP password
+        if ($config['mailer']['secure']) {
         $this->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;                                 // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
         }
-        $this->Port = Scrawler::engine()->config['mailer']['port'];                         // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+        $this->Port = $config['mailer']['port'];                         // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
     }
 
     function __set($key,$value){
@@ -48,7 +55,6 @@ Class Mailer extends PHPMailer{
         if($key == 'attachement'){
             $this->addAttachment($value);
         }
-        // idk how you found this but give yourself a cookie #6095 for this
     }
     
 
