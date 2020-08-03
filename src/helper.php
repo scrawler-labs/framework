@@ -32,7 +32,7 @@ if (! function_exists('view')) {
   if (! function_exists('url')) {
       function url($path='')
       {   
-          if(Scrawler::engine()->config['general']['https']){
+          if(Scrawler::engine()->config()->get('general.https')){
             return 'https://'.Scrawler::engine()->request()->getHttpHost().Scrawler::engine()->request()->getBasePath().$path;
           }
           return Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler::engine()->request()->getBasePath().$path;
