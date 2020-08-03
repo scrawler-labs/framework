@@ -156,7 +156,6 @@ class Scrawler implements HttpKernelInterface
             $middlewares = $this->config()->get('middlewares');
 
             $response = $this->pipeline()->middleware([
-            \Scrawler\Middleware\Csrf::class,
             ...$middlewares
         ])
         ->run($this->request, function ($request) {
