@@ -36,4 +36,17 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     {
         return array_merge($this->request->all(), $this->query->all());
     }
+
+    /**
+     * Check id requst has key 
+     *
+     * @return boolean
+     */
+    public function has($key)
+    {
+        if($this->request->has($key) || $this->query->has($key)){
+            return true;
+        }
+        return false;
+    }
 }
