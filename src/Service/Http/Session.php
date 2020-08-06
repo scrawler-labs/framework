@@ -68,19 +68,20 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
      */
     public function flash($type=null, $messages=null)
     {
-        if(isset($messages)){
+        if(!is_null($messages)){
             $this->getFlashBag()->set($type,$messages);
-        }
-        if(isset($type)){
-            //hacky function to emulate old behavior (would be removed in 2.4.x)
-            $messages=$this->getFlashBag()->get($type);
-            if (isset($messages[0])) {
-                return $messages[0];
+        }else{
+            if (!is_null($type)) {
+                //hacky function to emulate old behavior (would be removed in 2.4.x)
+                $messages=$this->getFlashBag()->get($type);
+                if (isset($messages[0])) {
+                    return $messages[0];
+                }
+                return '';
             }
-                return '';  
+            return $this->getFlashBag()->all();
         }
 
-        return $this->getFlashBag();
 
     }
 
