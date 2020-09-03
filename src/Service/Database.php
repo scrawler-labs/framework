@@ -144,9 +144,14 @@ class Database
      * @param array $values
      * @return array|array<integer,RedBeanPHP\OODBBean>
      */
-    public function findOrLoad($table, $query = null, $values = [])
+    public function findOrCreate($table, $query = null, $values = [])
     {
-        return $this->finder->findOrDispense($table, $query, $values);
+        $model = $this->finder->findOne($table, $query, $values);
+        if (!empty($model)) {
+            return $model;
+        } else {
+            return $this->toolbox->dispense($table);
+        }
     }
 
     /**
