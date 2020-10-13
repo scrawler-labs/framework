@@ -155,6 +155,24 @@ class Database
     }
 
     /**
+     * Find and update a record if id matches else create record
+     *
+     * @param string $table
+     * @param string $query
+     * @param array $values
+     * @return array|array<integer,RedBeanPHP\OODBBean>
+     */
+    public function updateOrCreate($table, $id = null)
+    {
+        $model = $this->toolbox->load($table, $id);
+        if (($id != null || $id != 0) && !empty($model)) {
+            return $model;
+        } else {
+            return $this->toolbox->dispense($table);
+        }
+    }
+
+    /**
      * Bind all value from incoming request to model (aka bean)
      * and saves it.
      *
