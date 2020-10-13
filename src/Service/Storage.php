@@ -66,10 +66,17 @@ class Storage extends \League\Flysystem\Filesystem
         return $uploaded;
     }
 
-    private function writeRequest($file, $path='')
+    private function writeRequest($file, $path='',$filename = null)
     {
         $content = file_get_contents($file->getPathname());
-        $filename=md5($file->getClientOriginalName()).uniqid().'.'.$file->getClientOriginalExtension();
+        //changes made by pornima on 12/10/2020
+        // $filename=md5($file->getClientOriginalName()).uniqid().'.'.$file->getClientOriginalExtension();
+        $originalname = explode(".",$file->getClientOriginalName());
+        if($filename == null){
+            $filename=$originalname[0].'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        }else{
+            $filename = $filename.'.'.$file->getClientOriginalExtension();
+        }
         $this->write($path.$filename, $content);
         return $path.$filename;
     }
