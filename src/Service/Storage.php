@@ -55,18 +55,22 @@ class Storage extends \League\Flysystem\Filesystem
             if (\is_array($file)) {
                 $paths=[];
                 foreach ($file as $single) {
+                    if($single){
                     $filepath =  $this->writeRequest($single, $path);
                     array_push($paths, $filepath);
+                    }
                 }
                 $uploaded[$name] = $paths;
             } else {
+                if($file){
                 $uploaded[$name]  = $this->writeRequest($file, $path);
+                }
             }
         }
         return $uploaded;
     }
 
-    private function writeRequest($file, $path='',$filename = null)
+    public function writeRequest($file, $path='',$filename = null)
     {
         $content = file_get_contents($file->getPathname());
         //changes made by pornima on 12/10/2020
