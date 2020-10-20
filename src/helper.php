@@ -182,6 +182,23 @@ if (! function_exists('view')) {
             return Scrawler::engine()->validator()->validateRequest($rules,$messages);      
         }
     }
+
+    /**
+     * helper function to validate request and write error in flash
+     * @return boolean
+     */
+    if (! function_exists('validateAndFlash')) {
+        function valdateAndFlash($rules,$messages=[])
+        {
+           $validator=Scrawler::engine()->validator()->validateRequest($rules,$messages);  
+           if($validator->fails()){
+               Scrawler()->session()->flash('errors',$validator->errors()->all());
+               return false;
+           }else{
+               return true;
+           }    
+        }
+    }
    
 
 
