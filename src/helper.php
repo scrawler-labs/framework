@@ -2,17 +2,6 @@
 use Scrawler\Scrawler;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-/**
- * Helper function to return instance of scrawler
- *
- * @return Object \Scrawler\Scrawler
- */
-if (! function_exists('s')) {
-    function s()
-    {
-        return Scrawler::engine();
-    }
-}
 
 /**
  * Helper function to return instance of scrawler
