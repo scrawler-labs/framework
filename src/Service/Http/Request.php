@@ -24,7 +24,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
         if ($value == '') {
             $value = $this->query->get($key);
         } 
-        if ($value == '') {
+        if ($value == '' && $this->getContent()) {
             $value = json_decode($this->getContent())->$key;
         }
         return $value;
@@ -37,7 +37,11 @@ class Request extends \Symfony\Component\HttpFoundation\Request
      */
     public function all()
     {
+        if($this->getContent())
         return array_merge($this->request->all(), $this->query->all(),  json_decode($this->getContent(),true));
+
+        return array_merge($this->request->all(), $this->query->all());
+
     }
 
     /**
@@ -47,7 +51,11 @@ class Request extends \Symfony\Component\HttpFoundation\Request
      */
     public function has($key)
     {
-        if($this->request->has($key) || $this->query->has($key) || isset(json_decode($this->getContent())->$key)){
+        if($this->getContent()){
+            if(isset(json_decode($this->getContent())->$key))
+            return true;
+        }
+        if($this->request->has($key) || $this->query->has($key)){
             return true;
         }
         return false;
