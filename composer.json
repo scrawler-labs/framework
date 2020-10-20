@@ -20,7 +20,8 @@
         "php-di/php-di": "^6.1",
         "scrawler/database": "^5.5.1",
         "hassankhan/config": "^2.1",
-        "monolog/monolog": "^2.1"
+        "monolog/monolog": "^2.1",
+        "rakit/validation": "^1.4"
 
     },
     "autoload": {

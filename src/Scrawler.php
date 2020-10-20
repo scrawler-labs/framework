@@ -26,6 +26,7 @@ use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
+use Scrawler\Service\Validator;
 
 use Noodlehaus\Config;
 
@@ -145,6 +146,8 @@ class Scrawler implements HttpKernelInterface
         'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('StorageAdapter')),
         'filesystem' => \DI\get('storage'),
         'logger' => \DI\autowire(Logger::class)->constructor(\DI\get('LogAdapter')),
+        'validator' => \DI\autowire(Validator::class),
+
         ];
 
         return array_merge($adapters, $config);
