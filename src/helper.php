@@ -173,12 +173,22 @@ if (! function_exists('view')) {
     }
    
     /**
-     * helper function to get db model
+     * helper function to write log
      */
     if (! function_exists('log')) {
         function log($level,$message,$context=[])
         {
             return Scrawler::engine()->logger()->$level($message,$context);      
+        }
+    }
+
+    /**
+     * helper function to validate request
+     */
+    if (! function_exists('validate')) {
+        function valdate($rules,$messages=[])
+        {
+            return Scrawler::engine()->validator()->validateRequest($rules,$messages);      
         }
     }
    
