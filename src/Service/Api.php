@@ -32,7 +32,7 @@ class Api
       */
      function __construct(){
 
-        $this->path_info = explode('/', Scrawler()->request()->getPathInfo());
+        $this->path_info = explode('/', Scrawler::engine()->request()->getPathInfo());
         array_shift($this->path_info);
         $this->method =$this->request->getMethod();
         if(isset($this->path_info[1])){
@@ -48,7 +48,7 @@ class Api
       * @return boolean
       */
      public static function isApi(){
-        $path_info = explode('/', Scrawler()->request()->getPathInfo());
+        $path_info = explode('/', Scrawler::engine()->request()->getPathInfo());
 
          if($path_info[1]=='api'){
              return true;
@@ -88,10 +88,10 @@ class Api
       */
      private function get(){
          if(count($this->path_info)==3){
-             return Scrawler()->db()->get($this->model, $this->path_info[2]);
+             return Scrawler::engine()->db()->get($this->model, $this->path_info[2]);
          }
          if(count($this->path_info)==2){
-             return Scrawler()->db()->get($this->model);
+             return Scrawler::engine()->db()->get($this->model);
          }
          return json_encode(['error'=>'not found']);
      }
@@ -104,11 +104,11 @@ class Api
              return $this->find();
          }
 
-          $model = Scrawler()->db()->create($this->model);
+          $model = Scrawler::engine()->db()->create($this->model);
          foreach($_POST as $property => $value){
              $model->$property = $value;
          }
-         return Scrawler()->db()->save($model);
+         return Scrawler::engine()->db()->save($model);
      }
 
       /**
@@ -116,11 +116,11 @@ class Api
       */
      private function delete(){
          if (count($this->path_info)==3) {
-             $model = Scrawler()->db()->get($this->model, $this->path_info[2]);
-             Scrawler()->db()->delete($model);
+             $model = Scrawler::engine()->db()->get($this->model, $this->path_info[2]);
+             Scrawler::engine()->db()->delete($model);
          }
          if (count($this->path_info)==2) {
-             returnScrawler()->db()->deleteAll($this->model);
+             return Scrawler::engine()->db()->deleteAll($this->model);
          }
      }
 
@@ -129,7 +129,7 @@ class Api
       */
      private function find(){
          foreach($_POST as $var=>$query){
-             return Scrawler()->db()->find( $this->model, $query,[ $var] );
+             return Scrawler::engine()->db()->find( $this->model, $query,[ $var] );
          }
      }
 
