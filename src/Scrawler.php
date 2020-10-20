@@ -27,6 +27,7 @@ use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
 use Scrawler\Service\Validator;
+use Scrawler\Service\Api;
 
 use Noodlehaus\Config;
 
@@ -59,6 +60,11 @@ class Scrawler implements HttpKernelInterface
      * Stores the base directory of scrawler project
      */
     private $base_dir;
+
+    /**
+     * Check if Scrawler is in API mode
+     */
+    private $apiMode = false;
 
     /**
       * Scrawler version
@@ -161,6 +167,11 @@ class Scrawler implements HttpKernelInterface
     {
         try {
             $this->request = $request;
+            if(Api::isApi()){
+                $this->apiMode = true;
+                $api = new Api();
+                return $this->makeResponse($api->dispatch());
+            }
 
             $middlewares = $this->config()->get('middlewares');
 
