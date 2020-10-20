@@ -97,27 +97,18 @@ if (! function_exists('view')) {
      * session read and write helper
      */
     if (! function_exists('flash')) {
-        function flash($key,$value=NULL)
+        function flash($key,$messages=NULL)
         {
             Scrawler::engine()->session()->start();
             if($value == NULL){
                 return Scrawler::engine()->session()->flash($key);
             } else{
-                Scrawler::engine()->session()->flash($key,$value);
+                Scrawler::engine()->session()->flash($key,$messages);
             }
         }
     }
 
-    /**
-     * session read and write helper
-     */
-    if (! function_exists('flash_has')) {
-        function session_has($key)
-        {
-            Scrawler::engine()->session()->start();
-            return Scrawler::engine()->session()->isset($key);
-        }
-    }
+
 
     /**
      *  helper method to check csrf token
