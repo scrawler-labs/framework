@@ -26,6 +26,7 @@ use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
+
 use Noodlehaus\Config;
 
 
@@ -61,7 +62,7 @@ class Scrawler implements HttpKernelInterface
     /**
       * Scrawler version
       */
-    const VERSION = '2.2.3';
+    const VERSION = '3.0.0';
 
 
 
@@ -134,16 +135,16 @@ class Scrawler implements HttpKernelInterface
         'router'=> \DI\autowire(RouteCollection::class)
         ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
         'db' => \DI\autowire(Database::class),
-        'session' => \DI\autowire(Session::class)->constructor(\DI\get('sessionAdapter')),
+        'session' => \DI\autowire(Session::class)->constructor(\DI\get('SessionAdapter')),
         'pipeline' => \DI\autowire(Pipeline::class),
         'dispatcher' =>  \DI\autowire(EventDispatcher::class),
         'cache' => \DI\autowire(Cache::class),
         'mail' => \DI\autowire(Mailer::class),
         'template' => \DI\autowire(Template::class)->constructor($views, $cache),
         'module' => \DI\autowire(Module::class),
-        'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('storageAdapter')),
+        'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('StorageAdapter')),
         'filesystem' => \DI\get('storage'),
-
+        'logger' => \DI\autowire(Logger::class)->constructor(\DI\get('LogAdapter')),
         ];
 
         return array_merge($adapters, $config);
@@ -191,6 +192,7 @@ class Scrawler implements HttpKernelInterface
         if ($this->config()->get('general.env')!='prod') {
             throw $e;
         } else {
+            $this->container->get('logger')->error($e->getMessage());
             if ($e instanceof \Scrawler\Router\NotFoundException) {
                 $response->setStatusCode(404);
                 $response->setContent('404 error');

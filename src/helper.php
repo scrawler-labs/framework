@@ -172,6 +172,16 @@ if (! function_exists('view')) {
         }
     }
    
+    /**
+     * helper function to get db model
+     */
+    if (! function_exists('log')) {
+        function log($level,$message,$context=[])
+        {
+            return Scrawler::engine()->logger()->$level($message,$context);      
+        }
+    }
+   
 
 
 
