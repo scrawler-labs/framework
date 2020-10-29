@@ -10,7 +10,7 @@ namespace Scrawler\Service;
 
 use Scrawler\Scrawler;
 
-class Logger extends Monolog\Logger
+class Logger extends \Monolog\Logger
 {
     public function __construct($adapter){
         parent::__construct('Scrawler');

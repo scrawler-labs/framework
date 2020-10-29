@@ -28,6 +28,8 @@ use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
 use Scrawler\Service\Validator;
 use Scrawler\Service\Api;
+use Scrawler\Service\Logger;
+
 
 use Noodlehaus\Config;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Adapter for session in database filesystem
+ * Adapter for log in file
  *
  * @package: Scrawler
  * @author: Pranjal Pandey
@@ -10,10 +10,10 @@ namespace Scrawler\Adapters\Log;
 use Scrawler\Scrawler;
 use Monolog\Handler\RotatingFileHandler;
 
-Class DatabaseAdapter extends RotatingFileHandler {
+Class FileAdapter extends RotatingFileHandler {
 
    public function __construct(){
-       parent::__construct('log',10);
+       parent::__construct('logs/log',10);
    }
 
 }
