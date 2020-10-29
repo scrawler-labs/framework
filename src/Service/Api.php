@@ -34,7 +34,7 @@ class Api
 
         $this->path_info = explode('/', Scrawler::engine()->request()->getPathInfo());
         array_shift($this->path_info);
-        $this->method =$this->request->getMethod();
+        $this->method =Scrawler::engine()->request()->getMethod();
         if(isset($this->path_info[1])){
          $this->model = $this->path_info[1];
         }else{
