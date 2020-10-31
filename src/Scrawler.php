@@ -1,6 +1,7 @@
 <?php
 /**
- * Scarawler core container
+ * Scrawler Core
+ * This package is the base container and kernel
  *
  * @package: Scrawler
  * @author: Pranjal Pandey
@@ -8,31 +9,26 @@
 
 namespace Scrawler;
 
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernel;
-use Scrawler\Router\RouteCollection;
-use Scrawler\Router\RouterEngine;
+use Noodlehaus\Config;
 use Scrawler\Router\ArgumentResolver;
 use Scrawler\Router\ControllerResolver;
-use Scrawler\Service\Database;
-use Scrawler\Service\Module;
-use Scrawler\Service\Template;
+use Scrawler\Router\RouteCollection;
+use Scrawler\Router\RouterEngine;
+use Scrawler\Service\Api;
 use Scrawler\Service\Cache;
-use Scrawler\Service\Mailer;
+use Scrawler\Service\Database;
 use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Session;
+use Scrawler\Service\Logger;
+use Scrawler\Service\Mailer;
+use Scrawler\Service\Module;
 use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
+use Scrawler\Service\Template;
 use Scrawler\Service\Validator;
-use Scrawler\Service\Api;
-use Scrawler\Service\Logger;
-
-
-use Noodlehaus\Config;
-
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  *  @method mixed pipeline()
@@ -47,8 +43,8 @@ class Scrawler implements HttpKernelInterface
     public static $scrawler;
 
     /**
-    * Stores the request being processed
-    */
+     * Stores the request being processed
+     */
     private $request;
 
     /**
@@ -69,14 +65,14 @@ class Scrawler implements HttpKernelInterface
     private $apiMode = false;
 
     /**
-      * Scrawler version
-      */
+     * Scrawler version
+     */
     const VERSION = '3.0.0';
 
-
-
     /**
-     * Initialize all the needed functionalities
+     * Initialize the Scrawler Engine
+     *
+     * @param String $base_dir
      */
     public function __construct($base_dir)
     {
@@ -85,7 +81,7 @@ class Scrawler implements HttpKernelInterface
         $this->base_dir = $base_dir;
         $this->init();
 
-        include __DIR__.'/helper.php';
+        include __DIR__ . '/helper.php';
     }
 
     /**
@@ -100,23 +96,29 @@ class Scrawler implements HttpKernelInterface
     }
 
     /**
-     * Initialize Scrawler Engine
+     * Build container and configuration
+     *
+     * @return void
      */
     private function init()
     {
 
-
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions($this->containerConfig());
         $this->container = $builder->build();
-        $this->config()->set('general.base_dir',$this->base_dir);
-        $this->config()->set('general.storage', $this->base_dir.'/storage');
+        $this->config()->set('general.base_dir', $this->base_dir);
+        $this->config()->set('general.storage', $this->base_dir . '/storage');
 
         if ($this->config()->get('general.env') == "dev") {
             $this->registerWhoops();
         }
     }
 
+    /**
+     * Register Whoops ErrorHandler
+     *
+     * @return void
+     */
     private function registerWhoops()
     {
         $whoops = new \Whoops\Run;
@@ -131,66 +133,80 @@ class Scrawler implements HttpKernelInterface
      */
     private function containerConfig()
     {
-        $views = $this->base_dir.'/app/views';
-        $cache = $this->base_dir.'/cache/templates';
+        $views = $this->base_dir . '/app/views';
+        $cache = $this->base_dir . '/cache/templates';
 
-        $adapter_config = include($this->base_dir."/config/adapter.php");
+        $adapter_config = include $this->base_dir . "/config/adapter.php";
         $adapters = [];
-        foreach ($adapter_config as $name=>$class) {
+        foreach ($adapter_config as $name => $class) {
             $adapters[$name] = \DI\autowire($class);
         }
         $config = [
-        'config' => \DI\autowire(Config::class)->constructor($this->base_dir.'/config'),
-        'router'=> \DI\autowire(RouteCollection::class)
-        ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
-        'db' => \DI\autowire(Database::class),
-        'session' => \DI\autowire(Session::class)->constructor(\DI\get('SessionAdapter')),
-        'pipeline' => \DI\autowire(Pipeline::class),
-        'dispatcher' =>  \DI\autowire(EventDispatcher::class),
-        'cache' => \DI\autowire(Cache::class),
-        'mail' => \DI\autowire(Mailer::class),
-        'template' => \DI\autowire(Template::class)->constructor($views, $cache),
-        'module' => \DI\autowire(Module::class),
-        'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('StorageAdapter')),
-        'filesystem' => \DI\get('storage'),
-        'logger' => \DI\autowire(Logger::class)->constructor(\DI\get('LogAdapter')),
-        'validator' => \DI\autowire(Validator::class),
+            'config' => \DI\autowire(Config::class)->constructor($this->base_dir . '/config'),
+            'router' => \DI\autowire(RouteCollection::class)
+                ->constructor($this->base_dir . '/app/Controllers', 'App\Controllers',false),
+            'api_router' => \DI\autowire(RouteCollection::class)
+                ->constructor($this->base_dir . '/app/Controllers/Api', 'App\Controllers\Api',true),
+            'db' => \DI\autowire(Database::class),
+            'session' => \DI\autowire(Session::class)->constructor(\DI\get('SessionAdapter')),
+            'pipeline' => \DI\autowire(Pipeline::class),
+            'dispatcher' => \DI\autowire(EventDispatcher::class),
+            'cache' => \DI\autowire(Cache::class),
+            'mail' => \DI\autowire(Mailer::class),
+            'template' => \DI\autowire(Template::class)->constructor($views, $cache),
+            'module' => \DI\autowire(Module::class),
+            'storage' => \DI\autowire(Storage::class)->constructor(\DI\get('StorageAdapter')),
+            'filesystem' => \DI\get('storage'),
+            'logger' => \DI\autowire(Logger::class)->constructor(\DI\get('LogAdapter')),
+            'validator' => \DI\autowire(Validator::class),
 
         ];
 
         return array_merge($adapters, $config);
     }
 
-
     /**
-     * Handle function
+     * HttpKernal Handle Implementation
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param [type] $type
+     * @param boolean $catch
+     * @return void
      */
     public function handle(\Symfony\Component\HttpFoundation\Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
         try {
             $this->request = $request;
-            if(Api::isApi()){
+            if (Api::isApi()) {
                 $this->apiMode = true;
-                $api = new Api();
-                return $this->makeResponse($api->dispatch());
             }
 
-            $middlewares = $this->config()->get('middlewares');
+            if ($this->apiMode) {
+                $middlewares = $this->config()->get('api_middlewares');
+                $router = $this->api_router();
+            } else {
+                $middlewares = $this->config()->get('middlewares');
+                $router = $this->router();
+            }
 
             $response = $this->pipeline()->middleware($middlewares)
-        ->run($this->request, function ($request) {
-            $controllerResolver = new ControllerResolver();
-            $argumentResolver = new ArgumentResolver();
-    
-            $engine = new RouterEngine($request, $this->router());
-            $engine->route();
-        
-            $controller = $controllerResolver->getController($request);
+                ->run($this->request, function ($request) {
 
-            $arguments = $argumentResolver->getArguments($request, $controller);
-            return $this->makeResponse($controller(...$arguments));
-        });
+                    $engine = new RouterEngine($request, $router);
+                    $success = $engine->route();
+                    if (!$success && $this->apiMode) {
+                        $api = new Api();
+                        return $this->apiResponse($api->dispatch());
+                    }
 
+                    $controllerResolver = new ControllerResolver();
+                    $argumentResolver = new ArgumentResolver();
+
+                    $controller = $controllerResolver->getController($request);
+                    $arguments = $argumentResolver->getArguments($request, $controller);
+                    return $this->apiResponse($controller(...$arguments));
+
+                });
 
             return $this->makeResponse($response);
         } catch (\Exception $e) {
@@ -200,45 +216,72 @@ class Scrawler implements HttpKernelInterface
 
     /**
      * Handel Exception
+     *
+     * @param Exception $e
+     * @return Response
      */
     private function exceptionHandler($e)
     {
-        $response =  new Response();
+        $response = new Response();
 
-        if ($this->config()->get('general.env')!='prod') {
-            throw $e;
+        if ($this->apiMode) {
+
+            $response->setStatusCode(500);
+            $response->setContent(\json_encode([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+            ]));
+
         } else {
-            $this->container->get('logger')->error($e->getMessage());
-            if ($e instanceof \Scrawler\Router\NotFoundException) {
-                $response->setStatusCode(404);
-                $response->setContent('404 error');
+            if ($this->config()->get('general.env') != 'prod') {
+                throw $e;
             } else {
-                $response->setStatusCode(500);
-                $response->setContent('Internal error');
+                $this->container->get('logger')->error($e->getMessage());
+                if ($e instanceof \Scrawler\Router\NotFoundException) {
+                    $response->setStatusCode(404);
+                    $response->setContent('404 error');
+                } else {
+                    $response->setStatusCode(500);
+                    $response->setContent('Internal error');
+                }
+
+                return $response;
             }
-          
-            return  $response;
+
         }
+
     }
 
     /**
      * Make sure the content is a reponse object
-     * @return Object Response
+     *
+     * @param String|Response $content
+     * @return Response
      */
     private function makeResponse($content)
     {
         if (!$content instanceof Response) {
+
+            if (is_array($content)) {
+                $content = \json_encode($content);
+            }
+
+            if ($this->apiMode) {
+                $type = ['content-type' => 'text/html'];
+            } else {
+                $type = ['content-type' => 'application/json'];
+            }
+
             $response = new Response(
                 $content,
                 Response::HTTP_OK,
-                ['content-type' => 'text/html']
+                $type
             );
         } else {
             $response = $content;
         }
         return $response;
     }
-
 
     /**
      * Returns request object
@@ -258,13 +301,13 @@ class Scrawler implements HttpKernelInterface
         return self::$scrawler;
     }
 
-
     /**
-      * Returns scrawler version
-      *
-      * @return string
-      */
-      public function getVersion(){
+     * Returns scrawler version
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
         return static::VERSION;
     }
 }
