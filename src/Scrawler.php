@@ -65,6 +65,11 @@ class Scrawler implements HttpKernelInterface
     private $apiMode = false;
 
     /**
+     * Stores the router being used
+     */
+     private $current_router;
+
+    /**
      * Scrawler version
      */
     const VERSION = '3.0.0';
@@ -109,7 +114,7 @@ class Scrawler implements HttpKernelInterface
         $this->config()->set('general.base_dir', $this->base_dir);
         $this->config()->set('general.storage', $this->base_dir . '/storage');
 
-        if ($this->config()->get('general.env') == "dev") {
+        if ($this->config()->get('general.env') == "dev" && !$this->apiMode) {
             $this->registerWhoops();
         }
     }
@@ -144,9 +149,9 @@ class Scrawler implements HttpKernelInterface
         $config = [
             'config' => \DI\autowire(Config::class)->constructor($this->base_dir . '/config'),
             'router' => \DI\autowire(RouteCollection::class)
-                ->constructor($this->base_dir . '/app/Controllers', 'App\Controllers',false),
+                ->constructor($this->base_dir . '/app/Controllers', 'App\Controllers'),
             'api_router' => \DI\autowire(RouteCollection::class)
-                ->constructor($this->base_dir . '/app/Controllers/Api', 'App\Controllers\Api',true),
+                ->constructor($this->base_dir . '/app/Controllers/Api', 'App\Controllers\Api'),
             'db' => \DI\autowire(Database::class),
             'session' => \DI\autowire(Session::class)->constructor(\DI\get('SessionAdapter')),
             'pipeline' => \DI\autowire(Pipeline::class),
@@ -183,20 +188,21 @@ class Scrawler implements HttpKernelInterface
 
             if ($this->apiMode) {
                 $middlewares = $this->config()->get('api_middlewares');
-                $router = $this->api_router();
+                $this->current_router = $this->api_router();
             } else {
                 $middlewares = $this->config()->get('middlewares');
-                $router = $this->router();
+                $this->current_router = $this->router();
             }
 
             $response = $this->pipeline()->middleware($middlewares)
                 ->run($this->request, function ($request) {
 
-                    $engine = new RouterEngine($request, $router);
+                    $engine = new RouterEngine($request, $this->current_router,$this->apiMode);
                     $success = $engine->route();
+
                     if (!$success && $this->apiMode) {
                         $api = new Api();
-                        return $this->apiResponse($api->dispatch());
+                        return $this->makeResponse($api->dispatch());
                     }
 
                     $controllerResolver = new ControllerResolver();
@@ -204,7 +210,7 @@ class Scrawler implements HttpKernelInterface
 
                     $controller = $controllerResolver->getController($request);
                     $arguments = $argumentResolver->getArguments($request, $controller);
-                    return $this->apiResponse($controller(...$arguments));
+                    return $this->makeResponse($controller(...$arguments));
 
                 });
 
@@ -228,9 +234,11 @@ class Scrawler implements HttpKernelInterface
 
             $response->setStatusCode(500);
             $response->setContent(\json_encode([
+                'error' => true,
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),
             ]));
+            return $response;
 
         } else {
             if ($this->config()->get('general.env') != 'prod') {
@@ -267,9 +275,9 @@ class Scrawler implements HttpKernelInterface
             }
 
             if ($this->apiMode) {
-                $type = ['content-type' => 'text/html'];
-            } else {
                 $type = ['content-type' => 'application/json'];
+            } else {
+                $type = ['content-type' => 'text/html'];
             }
 
             $response = new Response(
