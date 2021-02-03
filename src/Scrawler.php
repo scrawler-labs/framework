@@ -70,6 +70,11 @@ class Scrawler implements HttpKernelInterface
     private $current_router;
 
     /**
+     * Whoops instnace
+     */
+    private $whoops;
+
+    /**
      * Scrawler version
      */
     const VERSION = '3.0.0';
@@ -126,9 +131,12 @@ class Scrawler implements HttpKernelInterface
      */
     private function registerWhoops()
     {
-        $whoops = new \Whoops\Run;
-        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-        $whoops->register();
+        $this->whoops = new \Whoops\Run;
+        $this->whoops->allowQuit(false);
+        $this->whoops->writeToOutput(false);
+        $handler = new \Whoops\Handler\PrettyPageHandler;
+        $handler = addDataTable('Scrawler', ['version' => self::VERSION]);
+        $this->whoops->pushHandler();
     }
 
     /**
@@ -257,7 +265,8 @@ class Scrawler implements HttpKernelInterface
 
         } else {
             if ($this->config()->get('general.env') != 'prod') {
-                throw $e;
+                $response->setStatusCode(500);
+                $response->setContent($this->whoops->handleException($e));
             } else {
                 $this->container->get('logger')->error($e->getMessage());
                 if ($e instanceof \Scrawler\Router\NotFoundException) {
