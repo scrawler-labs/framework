@@ -135,8 +135,8 @@ class Scrawler implements HttpKernelInterface
         $this->whoops->allowQuit(false);
         $this->whoops->writeToOutput(false);
         $handler = new \Whoops\Handler\PrettyPageHandler;
-        $handler = addDataTable('Scrawler', ['version' => self::VERSION]);
-        $this->whoops->pushHandler();
+        $handler->addDataTable('Scrawler', ['version' => self::VERSION]);
+        $this->whoops->pushHandler($handler);
     }
 
     /**
@@ -276,9 +276,8 @@ class Scrawler implements HttpKernelInterface
                     $response->setStatusCode(500);
                     $response->setContent('Internal error');
                 }
-
-                return $response;
             }
+            return $response;
 
         }
 
