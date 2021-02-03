@@ -200,7 +200,7 @@ class Scrawler implements HttpKernelInterface
                     $engine = new RouterEngine($request, $this->current_router, $this->apiMode);
                     $success = $engine->route();
 
-                    if (!$success && $this->apiMode && $this->config()->get('general.autoAPI')) {
+                    if (!$success && $this->apiMode && $this->config()->get('general.env')) {
                         $api = new Api();
                         return $this->makeResponse($api->dispatch());
                     }
@@ -231,10 +231,13 @@ class Scrawler implements HttpKernelInterface
         $response = new Response();
 
         if ($this->apiMode) {
-
-            $response->setStatusCode(500);
+            $status = 500;
+            if ($e instanceof \Scrawler\Router\NotFoundException) {
+                $status = 404;
+            }
+            $response->setStatusCode($status);
             $response->setContent(\json_encode([
-                'status' => 500,
+                'status' => $status,
                 'message' => $e->getMessage(),
             ]));
             return $response;
