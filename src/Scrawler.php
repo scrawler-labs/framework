@@ -196,11 +196,18 @@ class Scrawler implements HttpKernelInterface
 
             $response = $this->pipeline()->middleware($middlewares)
                 ->run($this->request, function ($request) {
-
                     $engine = new RouterEngine($request, $this->current_router, $this->apiMode);
-                    $success = $engine->route();
+                    try {
+                        $success = $engine->route();
+                    } catch (\Scrawler\Router\NotFoundException $e) {
+                        if ($this->config()->get('general.autoAPI')) {
+                            $success = false;
+                        } else {
+                            throw $e;
+                        }
+                    }
 
-                    if (!$success && $this->apiMode && $this->config()->get('general.env')) {
+                    if (!$success && $this->apiMode && $this->config()->get('general.autoAPI')) {
                         $api = new Api();
                         return $this->makeResponse($api->dispatch());
                     }
