@@ -180,6 +180,12 @@ class Scrawler implements HttpKernelInterface
      */
     public function handle(\Symfony\Component\HttpFoundation\Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
+
+        //redirect to secure version if https is true
+        if (!$request->isSecure() && $this->config()->get('general.https')) {
+            return new RedirectResponse('https://' . $this->getBaseUrl() . $this->getPathInfo());
+        }
+
         try {
             $this->request = $request;
             if (Api::isApi()) {
@@ -207,7 +213,7 @@ class Scrawler implements HttpKernelInterface
                         }
                     }
 
-                    if (!$success && $this->apiMode && $this->config()->get('general.autoAPI')) {
+                    if (!$success && $this->apiMode) {
                         $api = new Api();
                         return $this->makeResponse($api->dispatch());
                     }
