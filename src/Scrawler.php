@@ -67,7 +67,7 @@ class Scrawler implements HttpKernelInterface
     /**
      * Stores the router being used
      */
-     private $current_router;
+    private $current_router;
 
     /**
      * Scrawler version
@@ -197,10 +197,10 @@ class Scrawler implements HttpKernelInterface
             $response = $this->pipeline()->middleware($middlewares)
                 ->run($this->request, function ($request) {
 
-                    $engine = new RouterEngine($request, $this->current_router,$this->apiMode);
+                    $engine = new RouterEngine($request, $this->current_router, $this->apiMode);
                     $success = $engine->route();
 
-                    if (!$success && $this->apiMode) {
+                    if (!$success && $this->apiMode && $this->config()->get('general.autoAPI')) {
                         $api = new Api();
                         return $this->makeResponse($api->dispatch());
                     }
@@ -234,8 +234,7 @@ class Scrawler implements HttpKernelInterface
 
             $response->setStatusCode(500);
             $response->setContent(\json_encode([
-                'error' => true,
-                'code' => $e->getCode(),
+                'status' => 500,
                 'message' => $e->getMessage(),
             ]));
             return $response;
