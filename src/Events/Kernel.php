@@ -1,7 +1,7 @@
 <?php
 namespace Scrawler\Events;
 
-class Kernel implements League\Event\HasEventName
+class Kernel implements \League\Event\HasEventName
 {
     /** @var string */
     private $name;
