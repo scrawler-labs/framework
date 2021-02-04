@@ -10,7 +10,7 @@ namespace Scrawler\Service\Http;
 
 use Scrawler\Scrawler;
 
-class Request extends \Symfony\Component\HttpFoundation\Response
+class Response extends \Symfony\Component\HttpFoundation\Response
 {
 
 }
