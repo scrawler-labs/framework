@@ -244,7 +244,7 @@ class Scrawler implements HttpKernelInterface
 
             return $this->makeResponse($response);
         } catch (\Exception $e) {
-            $this->dispatcher()->dispatch(new RequestController($request, $controller));
+            $this->dispatcher()->dispatch(new KernelException($e));
 
             return $this->exceptionHandler($e);
         }
@@ -287,7 +287,7 @@ class Scrawler implements HttpKernelInterface
             }
 
         }
-        $this->dispatcher()->dispatch(new KernelException($e));
+        $this->dispatcher()->dispatch(new RequestHandled($this->request, $response));
         return $response;
 
     }
