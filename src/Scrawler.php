@@ -11,10 +11,7 @@ namespace Scrawler;
 
 use League\Event\EventDispatcher;
 use Noodlehaus\Config;
-use Scrawler\Events\Kernel\KernelException;
-use Scrawler\Events\Kernel\RequestController;
-use Scrawler\Events\Kernel\RequestHandled;
-use Scrawler\Events\Kernel\RequestRecieved;
+use Scrawler\Events\Kernel;
 use Scrawler\Router\ArgumentResolver;
 use Scrawler\Router\ControllerResolver;
 use Scrawler\Router\RouteCollection;
@@ -199,8 +196,9 @@ class Scrawler implements HttpKernelInterface
         }
 
         try {
-            $this->dispatcher()->dispatch(new RequestRecieved($request));
             $this->request = $request;
+            $this->response = null;
+            $this->dispatcher()->dispatch(new Kernel('kernel.request'));
             if (Api::isApi()) {
                 $this->apiMode = true;
             }
@@ -236,7 +234,7 @@ class Scrawler implements HttpKernelInterface
 
                     $controller = $controllerResolver->getController($request);
                     $arguments = $argumentResolver->getArguments($request, $controller);
-                    $this->dispatcher()->dispatch(new RequestController($request, $controller));
+                    $this->dispatcher()->dispatch(new Kernel('kernel.controller', $controller));
 
                     return $this->makeResponse($controller(...$arguments));
 
@@ -244,7 +242,7 @@ class Scrawler implements HttpKernelInterface
 
             return $this->makeResponse($response);
         } catch (\Exception $e) {
-            $this->dispatcher()->dispatch(new KernelException($e));
+            $this->dispatcher()->dispatch(new Kernel('kernel.exception', $e));
 
             return $this->exceptionHandler($e);
         }
@@ -287,7 +285,7 @@ class Scrawler implements HttpKernelInterface
             }
 
         }
-        $this->dispatcher()->dispatch(new RequestHandled($this->request, $response));
+        $this->dispatcher()->dispatch(new Kernel('kernel.response'));
         return $response;
 
     }
@@ -320,7 +318,7 @@ class Scrawler implements HttpKernelInterface
         } else {
             $response = $content;
         }
-        $this->dispatcher()->dispatch(new RequestHandled($this->request, $response));
+        $this->dispatcher()->dispatch(new Kernel('kernel.response'));
 
         return $response;
     }
