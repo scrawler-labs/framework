@@ -287,7 +287,7 @@ class Scrawler implements HttpKernelInterface
         }
         $this->response = $response;
         $this->dispatcher()->dispatch(new Kernel('kernel.response'));
-        return $response;
+        return $this->response;
 
     }
 
@@ -322,7 +322,7 @@ class Scrawler implements HttpKernelInterface
         $this->response = $response;
         $this->dispatcher()->dispatch(new Kernel('kernel.response'));
 
-        return $response;
+        return $this->response;
     }
 
     /**
@@ -343,6 +343,14 @@ class Scrawler implements HttpKernelInterface
         return $this->response;
     }
 
+    /**
+     * Returns response object
+     * @return Object Response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
+    }
     /**
      * Returns scrawler class object
      * @return Object Scrawler\Scrawler
