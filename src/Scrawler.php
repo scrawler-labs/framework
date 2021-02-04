@@ -9,7 +9,9 @@
 
 namespace Scrawler;
 
+use League\Event\EventDispatcher;
 use Noodlehaus\Config;
+use Scrawler\Events\Kernel\RequestRecieved;
 use Scrawler\Router\ArgumentResolver;
 use Scrawler\Router\ControllerResolver;
 use Scrawler\Router\RouteCollection;
@@ -26,7 +28,6 @@ use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
 use Scrawler\Service\Template;
 use Scrawler\Service\Validator;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -195,6 +196,7 @@ class Scrawler implements HttpKernelInterface
         }
 
         try {
+            $this->dispatcher()->dispatch(new RequestRecieved($request));
             $this->request = $request;
             if (Api::isApi()) {
                 $this->apiMode = true;
@@ -231,12 +233,16 @@ class Scrawler implements HttpKernelInterface
 
                     $controller = $controllerResolver->getController($request);
                     $arguments = $argumentResolver->getArguments($request, $controller);
+                    $this->dispatcher()->dispatch(new RequestController($request, $controller));
+
                     return $this->makeResponse($controller(...$arguments));
 
                 });
 
             return $this->makeResponse($response);
         } catch (\Exception $e) {
+            $this->dispatcher()->dispatch(new RequestController($request, $controller));
+
             return $this->exceptionHandler($e);
         }
     }
@@ -261,7 +267,6 @@ class Scrawler implements HttpKernelInterface
                 'status' => $status,
                 'message' => $e->getMessage(),
             ]));
-            return $response;
 
         } else {
             if ($this->config()->get('general.env') != 'prod') {
@@ -277,9 +282,10 @@ class Scrawler implements HttpKernelInterface
                     $response->setContent('Internal error');
                 }
             }
-            return $response;
 
         }
+        $this->dispatcher()->dispatch(new KernelException($e));
+        return $response;
 
     }
 
@@ -311,6 +317,8 @@ class Scrawler implements HttpKernelInterface
         } else {
             $response = $content;
         }
+        $this->dispatcher()->dispatch(new RequestHandled($this->request, $response));
+
         return $response;
     }
 
