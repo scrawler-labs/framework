@@ -11,6 +11,9 @@ namespace Scrawler;
 
 use League\Event\EventDispatcher;
 use Noodlehaus\Config;
+use Scrawler\Events\Kernel\KernelException;
+use Scrawler\Events\Kernel\RequestController;
+use Scrawler\Events\Kernel\RequestHandled;
 use Scrawler\Events\Kernel\RequestRecieved;
 use Scrawler\Router\ArgumentResolver;
 use Scrawler\Router\ControllerResolver;
@@ -20,6 +23,7 @@ use Scrawler\Service\Api;
 use Scrawler\Service\Cache;
 use Scrawler\Service\Database;
 use Scrawler\Service\Http\Request;
+use Scrawler\Service\Http\Response;
 use Scrawler\Service\Http\Session;
 use Scrawler\Service\Logger;
 use Scrawler\Service\Mailer;
@@ -28,7 +32,6 @@ use Scrawler\Service\Pipeline;
 use Scrawler\Service\Storage;
 use Scrawler\Service\Template;
 use Scrawler\Service\Validator;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
