@@ -19,6 +19,7 @@ use Scrawler\Router\RouterEngine;
 use Scrawler\Service\Api;
 use Scrawler\Service\Cache;
 use Scrawler\Service\Database;
+use Scrawler\Service\ExceptionHandler;
 use Scrawler\Service\Http\Request;
 use Scrawler\Service\Http\Response;
 use Scrawler\Service\Http\Session;
@@ -71,11 +72,6 @@ class Scrawler implements HttpKernelInterface
     private $current_router;
 
     /**
-     * Whoops instnace
-     */
-    private $whoops;
-
-    /**
      * Scrawler version
      */
     const VERSION = '3.0.0';
@@ -91,7 +87,8 @@ class Scrawler implements HttpKernelInterface
 
         $this->base_dir = $base_dir;
         $this->init();
-
+        set_error_handler([ExceptionHandler::class, 'systemErrorHandler']);
+        set_exception_handler([ExceptionHandler::class, 'systemExceptionHandler']);
         include __DIR__ . '/helper.php';
     }
 
@@ -120,24 +117,6 @@ class Scrawler implements HttpKernelInterface
         $this->config()->set('general.base_dir', $this->base_dir);
         $this->config()->set('general.storage', $this->base_dir . '/storage');
 
-        if ($this->config()->get('general.env') == "dev" && !$this->apiMode) {
-            $this->registerWhoops();
-        }
-    }
-
-    /**
-     * Register Whoops ErrorHandler
-     *
-     * @return void
-     */
-    private function registerWhoops()
-    {
-        $this->whoops = new \Whoops\Run;
-        $this->whoops->allowQuit(false);
-        $this->whoops->writeToOutput(false);
-        $handler = new \Whoops\Handler\PrettyPageHandler;
-        $handler->addDataTable('Scrawler', ['version' => self::VERSION]);
-        $this->whoops->pushHandler($handler);
     }
 
     /**
@@ -173,6 +152,7 @@ class Scrawler implements HttpKernelInterface
             'filesystem' => \DI\get('storage'),
             'logger' => \DI\autowire(Logger::class)->constructor(\DI\get('LogAdapter')),
             'validator' => \DI\autowire(Validator::class),
+            'exceptionHandler' => \DI\autowire(Validator::class),
 
         ];
 
@@ -244,51 +224,8 @@ class Scrawler implements HttpKernelInterface
         } catch (\Exception $e) {
             $this->dispatcher()->dispatch(new Kernel('kernel.exception', $e));
 
-            return $this->exceptionHandler($e);
+            return $this->exceptionHandler()->handleException($e);
         }
-    }
-
-    /**
-     * Handel Exception
-     *
-     * @param Exception $e
-     * @return Response
-     */
-    private function exceptionHandler($e)
-    {
-        $response = new Response();
-
-        if ($this->apiMode) {
-            $status = 500;
-            if ($e instanceof \Scrawler\Router\NotFoundException) {
-                $status = 404;
-            }
-            $response->setStatusCode($status);
-            $response->setContent(\json_encode([
-                'status' => $status,
-                'message' => $e->getMessage(),
-            ]));
-
-        } else {
-            if ($this->config()->get('general.env') != 'prod') {
-                $response->setStatusCode(500);
-                $response->setContent($this->whoops->handleException($e));
-            } else {
-                $this->container->get('logger')->error($e->getMessage());
-                if ($e instanceof \Scrawler\Router\NotFoundException) {
-                    $response->setStatusCode(404);
-                    $response->setContent('404 error');
-                } else {
-                    $response->setStatusCode(500);
-                    $response->setContent('Internal error');
-                }
-            }
-
-        }
-        $this->response = $response;
-        $this->dispatcher()->dispatch(new Kernel('kernel.response'));
-        return $this->response;
-
     }
 
     /**

@@ -1050,16 +1050,16 @@
         },
         {
             "name": "scrawler/router",
-            "version": "v3.0.2",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrawler-php/router.git",
-                "reference": "f2483e1a1230fbddc58c04464ea0972f87198878"
+                "reference": "91d9688e06db689ea314414f4b403bf9b6716770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrawler-php/router/zipball/f2483e1a1230fbddc58c04464ea0972f87198878",
-                "reference": "f2483e1a1230fbddc58c04464ea0972f87198878",
+                "url": "https://api.github.com/repos/scrawler-php/router/zipball/91d9688e06db689ea314414f4b403bf9b6716770",
+                "reference": "91d9688e06db689ea314414f4b403bf9b6716770",
                 "shasum": ""
             },
             "require": {
@@ -1095,9 +1095,9 @@
             ],
             "support": {
                 "issues": "https://github.com/scrawler-php/router/issues",
-                "source": "https://github.com/scrawler-php/router/tree/v3.0.2"
+                "source": "https://github.com/scrawler-php/router/tree/v3.0.3"
             },
-            "time": "2021-02-03T18:35:22+00:00"
+            "time": "2021-02-03T19:00:43+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
