@@ -5,6 +5,7 @@ namespace Scrawler\Service;
 use Scrawler\Events\Kernel;
 use Scrawler\Scrawler;
 use Scrawler\Service\Api;
+use Scrawler\Service\Http\Response;
 
 class ExceptionHandler
 {
@@ -17,7 +18,7 @@ class ExceptionHandler
         $this->whoops->allowQuit(false);
         $this->whoops->writeToOutput(false);
         $handler = new \Whoops\Handler\PrettyPageHandler;
-        $handler->addDataTable('Scrawler', ['version' => self::VERSION]);
+        $handler->addDataTable('Scrawler', ['version' => Scrawler::VERSION]);
         $this->whoops->pushHandler($handler);
     }
 

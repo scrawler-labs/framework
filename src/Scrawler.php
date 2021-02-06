@@ -87,8 +87,8 @@ class Scrawler implements HttpKernelInterface
 
         $this->base_dir = $base_dir;
         $this->init();
-        set_error_handler([ExceptionHandler::class, 'systemErrorHandler']);
-        set_exception_handler([ExceptionHandler::class, 'systemExceptionHandler']);
+        set_error_handler([$this->exceptionHandler(), 'systemErrorHandler']);
+        set_exception_handler([$this->exceptionHandler(), 'systemExceptionHandler']);
         include __DIR__ . '/helper.php';
     }
 
@@ -152,7 +152,7 @@ class Scrawler implements HttpKernelInterface
             'filesystem' => \DI\get('storage'),
             'logger' => \DI\autowire(Logger::class)->constructor(\DI\get('LogAdapter')),
             'validator' => \DI\autowire(Validator::class),
-            'exceptionHandler' => \DI\autowire(Validator::class),
+            'exceptionHandler' => \DI\autowire(ExceptionHandler::class),
 
         ];
 
@@ -222,9 +222,10 @@ class Scrawler implements HttpKernelInterface
 
             return $this->makeResponse($response);
         } catch (\Exception $e) {
+            $this->exceptionHandler()->handleException($e);
             $this->dispatcher()->dispatch(new Kernel('kernel.exception', $e));
 
-            return $this->exceptionHandler()->handleException($e);
+            return $this->response;
         }
     }
 
