@@ -15,7 +15,7 @@ class Validator extends \Rakit\Validation\Validator
 
     public function validateRequest($rules, $messages = [])
     {
-        $validation = $this->make(Scrawler()->request() - all(), $rules);
+        $validation = $this->make(Scrawler()->request()->all(), $rules);
         if (!empty($messages)) {
             $validation->setMessages($messages);
         }
