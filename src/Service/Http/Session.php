@@ -92,5 +92,6 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
             }
             return $this->getFlashBag()->all();
         }
+    }
 
 }
