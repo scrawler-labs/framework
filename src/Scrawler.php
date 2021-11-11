@@ -179,9 +179,12 @@ class Scrawler implements HttpKernelInterface
             $this->request = $request;
             $this->response = null;
             $this->dispatcher()->dispatch(new Kernel('kernel.request'));
-            if (Api::isApi()) {
+            
+            // Api mode disabled for now
+            /* if (Api::isApi()) {
                 $this->apiMode = true;
-            }
+            } */ 
+            
 
             if ($this->apiMode) {
                 $middlewares = $this->config()->get('api_middlewares');
