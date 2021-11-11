@@ -24,7 +24,7 @@ class Storage extends \League\Flysystem\Filesystem
      * @param StorageInterface $adapter
      * @param \League\Flysystem\Config|array     $config
      */
-    public function __construct(StorageInterface $adapter, $config = null)
+    public function __construct(StorageInterface $adapter, $config = array())
     {
         parent::__construct($adapter, $config);
     }
