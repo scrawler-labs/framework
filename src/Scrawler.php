@@ -31,6 +31,7 @@ use Scrawler\Service\Storage;
 use Scrawler\Service\Template;
 use Scrawler\Service\Validator;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  *  @method mixed pipeline()
@@ -48,6 +49,11 @@ class Scrawler implements HttpKernelInterface
      * Stores the request being processed
      */
     private $request;
+
+    /**
+     * Stores the response object
+     */
+    private $response;
 
     /**
      * Store instance of container
@@ -110,13 +116,11 @@ class Scrawler implements HttpKernelInterface
      */
     private function init()
     {
-
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions($this->containerConfig());
         $this->container = $builder->build();
         $this->config()->set('general.base_dir', $this->base_dir);
         $this->config()->set('general.storage', $this->base_dir . '/storage');
-
     }
 
     /**
@@ -165,14 +169,14 @@ class Scrawler implements HttpKernelInterface
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param [type] $type
      * @param boolean $catch
-     * @return void
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(\Symfony\Component\HttpFoundation\Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
 
         //redirect to secure version if https is true
         if (!$request->isSecure() && $this->config()->get('general.https')) {
-            return new RedirectResponse('https://' . $this->getBaseUrl() . $this->getPathInfo());
+            return new RedirectResponse('https://' . $request->getBaseUrl() . $request->getPathInfo());
         }
 
         try {
@@ -183,7 +187,7 @@ class Scrawler implements HttpKernelInterface
             // Api mode disabled for now
             /* if (Api::isApi()) {
                 $this->apiMode = true;
-            } */ 
+            } */
             
 
             if ($this->apiMode) {
@@ -220,7 +224,6 @@ class Scrawler implements HttpKernelInterface
                     $this->dispatcher()->dispatch(new Kernel('kernel.controller', $controller));
 
                     return $this->makeResponse($controller(...$arguments));
-
                 });
 
             return $this->makeResponse($response);
@@ -241,7 +244,6 @@ class Scrawler implements HttpKernelInterface
     private function makeResponse($content)
     {
         if (!$content instanceof Response) {
-
             if (is_array($content)) {
                 $content = \json_encode($content);
             }

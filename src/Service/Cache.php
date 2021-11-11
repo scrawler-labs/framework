@@ -52,7 +52,8 @@ class Cache
     public function set($key, $value, $type='file')
     {
         if ($type  == 'file') {
-            return file_put_contents($this->location.$key.'.cache', serialize($value));
+            $op = file_put_contents($this->location.$key.'.cache', serialize($value));
+            return $op ? true : false;
         }
 
         if ($type == 'memory' &&  $this->config['memcahe']['enabled']) {
@@ -67,7 +68,7 @@ class Cache
      *
      * @param string $key the key  to get data from
      *
-     * @return string value stored in memcache
+     * @return mixed value stored in memcache
      */
     public function get($key, $type = 'file')
     {

@@ -30,7 +30,7 @@ class Database
         $this->toolbox = $t->getRedBean();
         $this->finder = new Finder($t);
         if ($config['general']['env'] == 'prod') {
-            $this->toolbox->freeze($true);
+            $this->toolbox->freeze(true);
         }
     }
 
@@ -145,7 +145,7 @@ class Database
      * @param string $table
      * @param string $query
      * @param array $values
-     * @return array|array<integer,RedBeanPHP\OODBBean>
+     * @return OODBBean
      */
     public function findOrCreate($table, $query = null, $values = [])
     {
@@ -163,7 +163,7 @@ class Database
      * @param string $table
      * @param string $query
      * @param array $values
-     * @return array|array<integer,RedBeanPHP\OODBBean>
+     * @return OODBBean
      */
     public function updateOrCreate($table, $id = null)
     {
