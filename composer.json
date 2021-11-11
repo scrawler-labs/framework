@@ -10,6 +10,7 @@
             "role": "Developer"
         }],
     "require": {
+        "psr/log": "^1.0",
         "symfony/http-kernel": "^5.1",
         "scrawler/router": "^3.0",
         "filp/whoops": "^2.9",
