@@ -8,10 +8,10 @@
 
 namespace Scrawler\Service;
 
-use Scrawler\Scrawler;
 use RedBeanPHP\Finder;
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
+use Scrawler\Scrawler;
 
 class Database
 {
@@ -23,11 +23,15 @@ class Database
      */
     public function __construct()
     {
-        $config=Scrawler::engine()->config()->all();
-        R::setup('mysql:host='.$config['database']['host'].';dbname='.$config['database']['database'], $config['database']['username'], $config['database']['password']);
+        $config = Scrawler::engine()->config()->all();
+        R::setup('mysql:host=' . $config['database']['host'] . ';dbname=' . $config['database']['database'], $config['database']['username'], $config['database']['password']);
+
         $t = R::getToolBox();
         $this->toolbox = $t->getRedBean();
         $this->finder = new Finder($t);
+        if ($config['general']['env'] == 'prod') {
+            $this->toolbox->freeze($true);
+        }
     }
 
     /**
@@ -40,7 +44,7 @@ class Database
     {
         return $this->toolbox->dispense($name);
     }
-    
+
     /**
      * Saves the model to the database
      *
@@ -51,7 +55,6 @@ class Database
     {
         return $this->toolbox->store($model);
     }
-
 
     /**
      * Overriding get method to either get single or all records
@@ -73,7 +76,7 @@ class Database
         }
         return R::__callStatic($name, $arguments);
     }
-    
+
     /**
      * Get record in locked mode
      *
@@ -118,7 +121,7 @@ class Database
      * @param array $values
      * @return array
      */
-    public function find(String $table, String $query, $values=[])
+    public function find(String $table, String $query, $values = [])
     {
         return $this->finder->find($table, $query, $values);
     }
@@ -131,7 +134,7 @@ class Database
      * @param array $values
      * @return OODBBean
      */
-    public function findOne(string $table, string $query, $values=[])
+    public function findOne(string $table, string $query, $values = [])
     {
         return $this->finder->findOne($table, $query, $values);
     }
@@ -184,10 +187,10 @@ class Database
         if (!($model instanceof OODBBean)) {
             $model = $this->create($model);
         }
-       
-        foreach (Scrawler::engine()->request()->all() as $key=>$value) {
+
+        foreach (Scrawler::engine()->request()->all() as $key => $value) {
             if ($key != 'csrf') {
-                $model->$key  = $value;
+                $model->$key = $value;
             }
         }
         return $this->save($model);
@@ -205,9 +208,9 @@ class Database
             $model = $this->create($model);
         }
 
-        foreach (Scrawler::engine()->request()->all() as $key=>$value) {
+        foreach (Scrawler::engine()->request()->all() as $key => $value) {
             if ($key != 'csrf') {
-                $model->$key  = $value;
+                $model->$key = $value;
             }
         }
 

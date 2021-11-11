@@ -32,20 +32,31 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
     {
         return $this->get($key);
     }
-
+    
+   
     /**
-     * To support legacy isset function
-     * Caution: for newer version use has() insted
+     * check if session has key
+     * 
+     * @param string $key
+     * @return bool
+     */
+    public function has($key){
+         if(parent::has($key) || parent::getFlashBag()->has($key)){
+            return true;
+         }
+         return false;
+    }
+    
+    /**
+     * legacy isset function
      * 
      * @param string $key
      * @return bool
      */
     public function isset($key){
-         if($this->has($key) || $this->getFlashBag()->has($key)){
-            return true;
-         }
-         return false;
+        $this->has($key);
     }
+    
 
     /**
      * Invalidates the current session.
@@ -58,7 +69,7 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
         $this->invalidate(0);
     }
 
-    /**
+   /**
      * Emulate legacy flash function
      * Since 2.3.0 flash function now returns flash bag too
      * 
@@ -72,7 +83,7 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
             $this->getFlashBag()->set($type,$messages);
         }else{
             if (!is_null($type)) {
-                //hacky function to emulate old behavior (would be removed in 2.4.x)
+                //hacky function to emulate old behavior 
                 $messages=$this->getFlashBag()->get($type);
                 if (isset($messages[0])) {
                     return $messages[0];
@@ -81,8 +92,6 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
             }
             return $this->getFlashBag()->all();
         }
-
-
     }
 
 }

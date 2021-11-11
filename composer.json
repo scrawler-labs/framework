@@ -10,16 +10,18 @@
             "role": "Developer"
         }],
     "require": {
-        "symfony/event-dispatcher": "^4.1",
-        "symfony/http-kernel": "^4.1",
-        "scrawler/router": "^2.0",
-        "filp/whoops": "^2.7",
+        "symfony/http-kernel": "^5.1",
+        "scrawler/router": "^3.0",
+        "filp/whoops": "^2.9",
         "eftec/bladeone": "^3.43",
         "phpmailer/phpmailer": "^6.1",
         "league/flysystem": "^1.0",
         "php-di/php-di": "^6.1",
         "scrawler/database": "^5.5.1",
-        "hassankhan/config": "^2.1"
+        "hassankhan/config": "^2.1",
+        "monolog/monolog": "^2.1",
+        "rakit/validation": "^1.4",
+        "league/event": "^3.0"
 
     },
     "autoload": {

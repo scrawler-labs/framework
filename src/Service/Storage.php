@@ -81,8 +81,12 @@ class Storage extends \League\Flysystem\Filesystem
         }else{
             $filename = $filename.'.'.$file->getClientOriginalExtension();
         }
-        $this->write($path.$filename, $content);
+        $this->write($content,$path.$filename);
         return $path.$filename;
+    }
+
+    public function write($content,$path,$config){
+        parent::write($path,$content,$config);
     }
 
     public function getUrl($path)

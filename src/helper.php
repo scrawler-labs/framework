@@ -2,9 +2,10 @@
 use Scrawler\Scrawler;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+
 /**
- * Helper function to return instance of scrawler
- *
+ * Depricated function use app() insted
+ * @depricated
  * @return Object \Scrawler\Scrawler
  */
 if (! function_exists('s')) {
@@ -97,19 +98,20 @@ if (! function_exists('view')) {
      * session read and write helper
      */
     if (! function_exists('flash')) {
-        function flash($key,$value=NULL)
+        function flash($key,$messages=NULL)
         {
             Scrawler::engine()->session()->start();
             if($value == NULL){
                 return Scrawler::engine()->session()->flash($key);
             } else{
-                Scrawler::engine()->session()->flash($key,$value);
+                Scrawler::engine()->session()->flash($key,$messages);
             }
         }
     }
 
     /**
-     * session read and write helper
+     * Helper function to check if session has a key
+     * @depricated
      */
     if (! function_exists('flash_has')) {
         function session_has($key)
@@ -118,6 +120,8 @@ if (! function_exists('view')) {
             return Scrawler::engine()->session()->isset($key);
         }
     }
+
+
 
     /**
      *  helper method to check csrf token
@@ -169,6 +173,43 @@ if (! function_exists('view')) {
         function model($model)
         {
             return Scrawler::engine()->db()->create($model);      
+        }
+    }
+   
+    /**
+     * helper function to write log
+     */
+    if (! function_exists('log')) {
+        function log($level,$message,$context=[])
+        {
+            return Scrawler::engine()->logger()->$level($message,$context);      
+        }
+    }
+
+    /**
+     * helper function to validate request
+     */
+    if (! function_exists('validate')) {
+        function valdate($rules,$messages=[])
+        {
+            return Scrawler::engine()->validator()->validateRequest($rules,$messages);      
+        }
+    }
+
+    /**
+     * helper function to validate request and write error in flash
+     * @return boolean
+     */
+    if (! function_exists('validateAndFlash')) {
+        function valdateAndFlash($rules,$messages=[])
+        {
+           $validator=Scrawler::engine()->validator()->validateRequest($rules,$messages);  
+           if($validator->fails()){
+               Scrawler()->session()->flash('errors',$validator->errors()->all());
+               return false;
+           }else{
+               return true;
+           }    
         }
     }
    
