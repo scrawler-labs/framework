@@ -74,7 +74,7 @@ class Scrawler implements HttpKernelInterface
     /**
      * Scrawler version
      */
-    const VERSION = '3.0.0';
+    const VERSION = '2.3.0';
 
     /**
      * Initialize the Scrawler Engine
