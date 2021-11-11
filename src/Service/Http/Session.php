@@ -69,11 +69,12 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
         $this->invalidate(0);
     }
 
-    /**
-     * Flash function
+   /**
+     * Emulate legacy flash function
+     * Since 2.3.0 flash function now returns flash bag too
      * 
      * @param string $type
-     * @param array $messages
+     * @param string|array $messages
      * @return mixed
      */
     public function flash($type=null, $messages=null)
@@ -82,12 +83,14 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
             $this->getFlashBag()->set($type,$messages);
         }else{
             if (!is_null($type)) {
-                return $this->getFlashBag()->get($type);
+                //hacky function to emulate old behavior 
+                $messages=$this->getFlashBag()->get($type);
+                if (isset($messages[0])) {
+                    return $messages[0];
+                }
+                return '';
             }
             return $this->getFlashBag()->all();
         }
-
-
-    }
 
 }
