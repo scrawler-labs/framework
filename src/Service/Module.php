@@ -24,11 +24,11 @@ class Module
     /**
      * Register a module
      */
-    public function register($name,$namespace)
+    public function register($name, $namespace)
     {
         $this->modules[$name] = $namespace.'\\'.$name;
         $this->dir = Scrawler::engine()->base_dir().'/modules/'.$name;
-        $this->registerRoutes($name,$namespace);
+        $this->registerRoutes($name, $namespace);
     }
 
     /**
@@ -48,7 +48,7 @@ class Module
     /**
      * Register routes of module
      */
-    private function registerRoutes($name,$namespace)
+    private function registerRoutes($name, $namespace)
     {
         Scrawler::engine()->router()->registerDir($name);
         $directory = $this->dir.'/Controllers';
@@ -66,7 +66,7 @@ class Module
     /**
      * Register views of module
      */
-    public function registerViews(){
+    public function registerViews() {
         Scrawler::engine()->template()->addPath($this->dir.'/views');
     }
 }

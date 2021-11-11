@@ -48,7 +48,7 @@ class Cors implements MiddlewareInterface
         }
 
         //Patch response on event in case of any failure
-        app()->dispatcher()->subscribeTo('kernel.response', function ($event) {
+        app()->dispatcher()->subscribeTo('kernel.response', function($event) {
             app()->setResponse($this->addHeaders(app()->request(), app()->response()));
         });
 

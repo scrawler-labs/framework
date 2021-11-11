@@ -47,46 +47,46 @@ class Storage extends \League\Flysystem\Filesystem
      * @param string $path
      * @return array path
      */
-    public function saveRequest(String $path='')
+    public function saveRequest(String $path = '')
     {
         $uploaded = [];
-        $files= Scrawler::engine()->request()->files->all();
+        $files = Scrawler::engine()->request()->files->all();
         foreach ($files as $name => $file) {
             if (\is_array($file)) {
-                $paths=[];
+                $paths = [];
                 foreach ($file as $single) {
-                    if($single){
-                    $filepath =  $this->writeRequest($single, $path);
+                    if ($single) {
+                    $filepath = $this->writeRequest($single, $path);
                     array_push($paths, $filepath);
                     }
                 }
                 $uploaded[$name] = $paths;
             } else {
-                if($file){
-                $uploaded[$name]  = $this->writeRequest($file, $path);
+                if ($file) {
+                $uploaded[$name] = $this->writeRequest($file, $path);
                 }
             }
         }
         return $uploaded;
     }
 
-    public function writeRequest($file, $path='',$filename = null)
+    public function writeRequest($file, $path = '', $filename = null)
     {
         $content = file_get_contents($file->getPathname());
         //changes made by pornima on 12/10/2020
         // $filename=md5($file->getClientOriginalName()).uniqid().'.'.$file->getClientOriginalExtension();
-        $originalname = explode(".",$file->getClientOriginalName());
-        if($filename == null){
-            $filename=$originalname[0].'_'.uniqid().'.'.$file->getClientOriginalExtension();
-        }else{
+        $originalname = explode(".", $file->getClientOriginalName());
+        if ($filename == null) {
+            $filename = $originalname[0].'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        } else {
             $filename = $filename.'.'.$file->getClientOriginalExtension();
         }
-        $this->write($content,$path.$filename);
+        $this->write($content, $path.$filename);
         return $path.$filename;
     }
 
-    public function write($content,$path,$config){
-        parent::write($path,$content,$config);
+    public function write($content, $path, $config) {
+        parent::write($path, $content, $config);
     }
 
     public function getUrl($path)

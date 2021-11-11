@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 Class DatabaseAdapter extends NativeSessionStorage {
 
-   public function __construct(){
-       parent::__construct([],new DatabaseHandler);
-   }
+    public function __construct(){
+        parent::__construct([],new DatabaseHandler);
+    }
 
 }

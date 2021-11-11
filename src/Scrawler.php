@@ -95,7 +95,7 @@ class Scrawler implements HttpKernelInterface
         $this->init();
         set_error_handler([$this->exceptionHandler(), 'systemErrorHandler']);
         set_exception_handler([$this->exceptionHandler(), 'systemExceptionHandler']);
-        include __DIR__ . '/helper.php';
+        include __DIR__.'/helper.php';
     }
 
     /**
@@ -120,7 +120,7 @@ class Scrawler implements HttpKernelInterface
         $builder->addDefinitions($this->containerConfig());
         $this->container = $builder->build();
         $this->config()->set('general.base_dir', $this->base_dir);
-        $this->config()->set('general.storage', $this->base_dir . '/storage');
+        $this->config()->set('general.storage', $this->base_dir.'/storage');
     }
 
     /**
@@ -130,20 +130,20 @@ class Scrawler implements HttpKernelInterface
      */
     private function containerConfig()
     {
-        $views = $this->base_dir . '/app/views';
-        $cache = $this->base_dir . '/cache/templates';
+        $views = $this->base_dir.'/app/views';
+        $cache = $this->base_dir.'/cache/templates';
 
-        $adapter_config = include $this->base_dir . "/config/adapter.php";
+        $adapter_config = include $this->base_dir."/config/adapter.php";
         $adapters = [];
         foreach ($adapter_config as $name => $class) {
             $adapters[$name] = \DI\autowire($class);
         }
         $config = [
-            'config' => \DI\autowire(Config::class)->constructor($this->base_dir . '/config'),
+            'config' => \DI\autowire(Config::class)->constructor($this->base_dir.'/config'),
             'router' => \DI\autowire(RouteCollection::class)
-                ->constructor($this->base_dir . '/app/Controllers', 'App\Controllers'),
+                ->constructor($this->base_dir.'/app/Controllers', 'App\Controllers'),
             'api_router' => \DI\autowire(RouteCollection::class)
-                ->constructor($this->base_dir . '/app/Controllers/Api', 'App\Controllers\Api'),
+                ->constructor($this->base_dir.'/app/Controllers/Api', 'App\Controllers\Api'),
             'db' => \DI\autowire(Database::class),
             'session' => \DI\autowire(Session::class)->constructor(\DI\get('SessionAdapter')),
             'pipeline' => \DI\autowire(Pipeline::class),
@@ -176,7 +176,7 @@ class Scrawler implements HttpKernelInterface
 
         //redirect to secure version if https is true
         if (!$request->isSecure() && $this->config()->get('general.https')) {
-            return new RedirectResponse('https://' . $request->getBaseUrl() . $request->getPathInfo());
+            return new RedirectResponse('https://'.$request->getBaseUrl().$request->getPathInfo());
         }
 
         try {
@@ -199,7 +199,7 @@ class Scrawler implements HttpKernelInterface
             }
 
             $response = $this->pipeline()->middleware($middlewares)
-                ->run($this->request, function ($request) {
+                ->run($this->request, function($request) {
                     $engine = new RouterEngine($request, $this->current_router, $this->apiMode);
                     try {
                         $success = $engine->route();

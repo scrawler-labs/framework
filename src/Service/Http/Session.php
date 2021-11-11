@@ -10,7 +10,7 @@ namespace Scrawler\Service\Http;
 
 use Scrawler\Scrawler;
 
-Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
+Class Session extends \Symfony\Component\HttpFoundation\Session\Session {
     /**
      * Magic method to directly set session variable
      *
@@ -19,7 +19,7 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
      */
     public function __set($key, $value)
     {
-        $this->set($key,$value);
+        $this->set($key, $value);
     }
     
     /**
@@ -41,10 +41,10 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
      * @return bool
      */
     public function has($key){
-         if(parent::has($key) || parent::getFlashBag()->has($key)){
+            if(parent::has($key) || parent::getFlashBag()->has($key)){
             return true;
-         }
-         return false;
+            }
+            return false;
     }
     
     /**
@@ -65,11 +65,11 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
      * session and deletes the old session from persistence.
      *
      */
-    public function stop(){
+    public function stop() {
         $this->invalidate(0);
     }
 
-   /**
+    /**
      * Emulate legacy flash function
      * Since 2.3.0 flash function now returns flash bag too
      * 
@@ -77,14 +77,14 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
      * @param string|array $messages
      * @return mixed
      */
-    public function flash($type=null, $messages=null)
+    public function flash($type = null, $messages = null)
     {
-        if(!is_null($messages)){
-            $this->getFlashBag()->set($type,$messages);
-        }else{
+        if (!is_null($messages)) {
+            $this->getFlashBag()->set($type, $messages);
+        } else {
             if (!is_null($type)) {
                 //hacky function to emulate old behavior 
-                $messages=$this->getFlashBag()->get($type);
+                $messages = $this->getFlashBag()->get($type);
                 if (isset($messages[0])) {
                     return $messages[0];
                 }

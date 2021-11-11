@@ -12,8 +12,8 @@ use Monolog\Handler\RotatingFileHandler;
 
 Class FileAdapter extends RotatingFileHandler {
 
-   public function __construct(){
-       parent::__construct('logs/log',10);
-   }
+    public function __construct(){
+        parent::__construct('logs/log',10);
+    }
 
 }

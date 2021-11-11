@@ -13,28 +13,28 @@ use Scrawler\Scrawler;
 class Api
 {
     /**
-    * Array too store request path info
-    */
+     * Array too store request path info
+     */
     private $path_info;
 
     /**
-    * stores the request method
-    */
+     * stores the request method
+     */
     private $method;
 
     /**
-    * Stores model
-    */
+     * Stores model
+     */
     private $model;
 
     /**
-    * Initialization tasks
-    */
+     * Initialization tasks
+     */
     public function __construct()
     {
         $this->path_info = explode('/', Scrawler::engine()->request()->getPathInfo());
         array_shift($this->path_info);
-        $this->method =Scrawler::engine()->request()->getMethod();
+        $this->method = Scrawler::engine()->request()->getMethod();
         if (isset($this->path_info[1])) {
             $this->model = $this->path_info[1];
         } else {
@@ -43,15 +43,15 @@ class Api
     }
 
     /**
-    * Function detects weather api mode should activate
-    *
-    * @return boolean
-    */
+     * Function detects weather api mode should activate
+     *
+     * @return boolean
+     */
     public static function isApi()
     {
         $path_info = explode('/', Scrawler::engine()->request()->getPathInfo());
 
-        if ($path_info[1]=='api') {
+        if ($path_info[1] == 'api') {
             return true;
         } else {
             return  false;
@@ -59,10 +59,10 @@ class Api
     }
 
     /**
-    * Function to send back response from Api mode
-    *
-    * @return string response json
-    */
+     * Function to send back response from Api mode
+     *
+     * @return string response json
+     */
     public function dispatch()
     {
         if (!$this->model) {
@@ -79,30 +79,30 @@ class Api
         }
         if ($this->method == 'DELETE') {
             $this->delete();
-            return json_encode(['sucess'=> 'delete query executed' ]);
+            return json_encode(['sucess'=> 'delete query executed']);
         }
     }
 
     /**
-    * Function to resolve get query
-    */
+     * Function to resolve get query
+     */
     private function get()
     {
-        if (count($this->path_info)==3) {
+        if (count($this->path_info) == 3) {
             return Scrawler::engine()->db()->get($this->model, $this->path_info[2]);
         }
-        if (count($this->path_info)==2) {
+        if (count($this->path_info) == 2) {
             return Scrawler::engine()->db()->get($this->model);
         }
         return json_encode(['error'=>'not found']);
     }
 
     /**
-    * Function to resolve post query
-    */
+     * Function to resolve post query
+     */
     private function post()
     {
-        if (count($this->path_info)==3 && $this->path_info[2] == 'find') {
+        if (count($this->path_info) == 3 && $this->path_info[2] == 'find') {
             return $this->find();
         }
 
@@ -114,26 +114,26 @@ class Api
     }
 
     /**
-    * Function to resolve delete query
-    */
+     * Function to resolve delete query
+     */
     private function delete()
     {
-        if (count($this->path_info)==3) {
+        if (count($this->path_info) == 3) {
             $model = Scrawler::engine()->db()->get($this->model, $this->path_info[2]);
             Scrawler::engine()->db()->delete($model);
         }
-        if (count($this->path_info)==2) {
+        if (count($this->path_info) == 2) {
             return Scrawler::engine()->db()->deleteAll($this->model);
         }
     }
 
     /**
-    * Function to resolve find query
-    */
+     * Function to resolve find query
+     */
     private function find()
     {
         foreach ($_POST as $var=>$query) {
-            return Scrawler::engine()->db()->find($this->model, $query, [ $var]);
+            return Scrawler::engine()->db()->find($this->model, $query, [$var]);
         }
     }
 }

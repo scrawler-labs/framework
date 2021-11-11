@@ -27,13 +27,13 @@ Class DatabaseHandler extends AbstractSessionHandler
     private $gcCalled = false;
 
 
-    public function __construct(){
+    public function __construct() {
         $this->db = Scrawler::engine()->db();
     }
 
-    protected function doWrite( $sessionId, $data){
+    protected function doWrite($sessionId, $data) {
         $maxlifetime = (int) ini_get('session.gc_maxlifetime');
-         $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$sessionId]);
+            $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$sessionId]);
         if ($session == null) {
             $session = $this->db->create('session');
         }
@@ -44,7 +44,7 @@ Class DatabaseHandler extends AbstractSessionHandler
         return true;
     }
 
-    protected function doRead($sessionId){
+    protected function doRead($sessionId) {
         $session = $this->db->findOne('session', 'sessionid = ? AND session_expire > ?', [$sessionId, time()]);
         if ($session == null) {
             return '';
@@ -52,13 +52,13 @@ Class DatabaseHandler extends AbstractSessionHandler
         return $session->session_data;
     }
 
-    protected function doDestroy( $sessionId){
+    protected function doDestroy($sessionId) {
         $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$sessionId]);
         $this->db->delete($session);
         return true;
     }
 
-    public function updateTimestamp($sessionId, $data){
+    public function updateTimestamp($sessionId, $data) {
         return true;
     }
 

@@ -24,7 +24,7 @@ class Database
     public function __construct()
     {
         $config = Scrawler::engine()->config()->all();
-        R::setup('mysql:host=' . $config['database']['host'] . ';dbname=' . $config['database']['database'], $config['database']['username'], $config['database']['password']);
+        R::setup('mysql:host='.$config['database']['host'].';dbname='.$config['database']['database'], $config['database']['username'], $config['database']['password']);
 
         $t = R::getToolBox();
         $this->toolbox = $t->getRedBean();
