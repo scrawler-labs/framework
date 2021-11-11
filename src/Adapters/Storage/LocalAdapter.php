@@ -9,9 +9,9 @@ namespace Scrawler\Adapters\Storage;
 
 use Scrawler\Scrawler;
 use Scrawler\Interfaces\StorageInterface;
-use League\Flysystem\Adapter\Local;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
-class LocalAdapter extends Local implements StorageInterface{
+class LocalAdapter extends LocalFilesystemAdapter implements StorageInterface{
 
    public function __construct(){
        parent::__construct(\Scrawler\Scrawler::engine()->config()->get('general.storage'));
