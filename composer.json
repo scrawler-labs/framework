@@ -15,7 +15,7 @@
         "filp/whoops": "^2.9",
         "eftec/bladeone": "^4.0",
         "phpmailer/phpmailer": "^6.1",
-        "league/flysystem": "^1.0",
+        "league/flysystem": "^2.0",
         "php-di/php-di": "^6.1",
         "scrawler/database": "^5.5.1",
         "hassankhan/config": "^2.1",
