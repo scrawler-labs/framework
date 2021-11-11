@@ -4,7 +4,7 @@ namespace Scrawler\Interfaces;
 
 use \Closure;
 
-interface StorageInterface extends \League\Flysystem\AdapterInterface
+interface StorageInterface extends \League\Flysystem\FilesystemAdapter
 {
 
 
