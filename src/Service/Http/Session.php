@@ -47,6 +47,16 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session{
          return false;
     }
     
+    /**
+     * legacy isset function
+     * 
+     * @param string $key
+     * @return bool
+     */
+    public function isset($key){
+        $this->has($key);
+    }
+    
 
     /**
      * Invalidates the current session.
