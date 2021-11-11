@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c04a20a2f71be8fbb5461787ff42231",
+    "content-hash": "3d59690fb76f8236d82079a65153c915",
     "packages": [
         {
             "name": "eftec/bladeone",
-            "version": "3.49.1",
+            "version": "4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EFTEC/BladeOne.git",
-                "reference": "b30021e41d0182e8bcce495484024643f18b9d2e"
+                "reference": "d3e1efa1c6f776aa87fe47164d77e7ea67fc196f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EFTEC/BladeOne/zipball/b30021e41d0182e8bcce495484024643f18b9d2e",
-                "reference": "b30021e41d0182e8bcce495484024643f18b9d2e",
+                "url": "https://api.github.com/repos/EFTEC/BladeOne/zipball/d3e1efa1c6f776aa87fe47164d77e7ea67fc196f",
+                "reference": "d3e1efa1c6f776aa87fe47164d77e7ea67fc196f",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=5.6"
+                "php": ">=7.1.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16.1",
+                "friendsofphp/php-cs-fixer": "^3.1",
                 "phpunit/phpunit": "^5.7",
-                "squizlabs/php_codesniffer": "^3.5.4"
+                "squizlabs/php_codesniffer": "^3.6.0"
             },
             "suggest": {
                 "eftec/bladeonehtml": "Extension to create forms",
@@ -60,9 +60,9 @@
             ],
             "support": {
                 "issues": "https://github.com/EFTEC/BladeOne/issues",
-                "source": "https://github.com/EFTEC/BladeOne/tree/3.49.1"
+                "source": "https://github.com/EFTEC/BladeOne/tree/4.1"
             },
-            "time": "2021-01-14T12:14:45+00:00"
+            "time": "2021-09-29T15:23:25+00:00"
         },
         {
             "name": "filp/whoops",
