@@ -49,14 +49,14 @@ class Cache
      *
      * @return boolean success value
      */
-    public function set($key, $value, $type='file')
+    public function set($key, $value, $type = 'file')
     {
-        if ($type  == 'file') {
+        if ($type == 'file') {
             $op = file_put_contents($this->location.$key.'.cache', serialize($value));
             return $op ? true : false;
         }
 
-        if ($type == 'memory' &&  $this->config['memcahe']['enabled']) {
+        if ($type == 'memory' && $this->config['memcahe']['enabled']) {
             return $this->memcache->set($key, $value);
         }
 

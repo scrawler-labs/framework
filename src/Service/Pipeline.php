@@ -11,7 +11,7 @@ use Scrawler\Scrawler;
 use InvalidArgumentException;
 use Scrawler\Interfaces\MiddlewareInterface;
 
-final class Pipeline{
+final class Pipeline {
 
     private $middlewares;
 
@@ -36,7 +36,7 @@ final class Pipeline{
         }
 
         if (!is_array($middlewares)) {
-            throw new InvalidArgumentException(get_class($middlewares) . " is not a valid middleware.");
+            throw new InvalidArgumentException(get_class($middlewares)." is not a valid middleware.");
         }
 
         return new static(array_merge($this->middlewares, $middlewares));
@@ -62,7 +62,7 @@ final class Pipeline{
         // We create the onion by starting initially with the core and then
         // gradually wrap it in layers. Each layer will have the next layer "curried"
         // into it and will have the current state (the object) passed to it.
-        $completePipeline = array_reduce($middlewares, function($nextMiddleware, $middleware){
+        $completePipeline = array_reduce($middlewares, function($nextMiddleware, $middleware) {
             return $this->createMiddleware($nextMiddleware, $middleware);
         }, $coreFunction);
 
@@ -104,7 +104,7 @@ final class Pipeline{
     {
         return function($object) use($nextMiddleware, $middleware){
             if(is_string($middleware)){
-               $middleware = new $middleware;
+                $middleware = new $middleware;
             }
             return $middleware->run($object, $nextMiddleware);
         };

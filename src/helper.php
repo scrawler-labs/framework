@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * @depricated
  * @return Object \Scrawler\Scrawler
  */
-if (! function_exists('s')) {
+if (!function_exists('s')) {
     function s()
     {
         return Scrawler::engine();
@@ -19,7 +19,7 @@ if (! function_exists('s')) {
  *
  * @return Object \Scrawler\Scrawler
  */
-if (! function_exists('app')) {
+if (!function_exists('app')) {
     function app()
     {
         return Scrawler::engine();
@@ -31,58 +31,58 @@ if (! function_exists('app')) {
  *
  * @return String rendered body
  */
-if (! function_exists('view')) {
-    function view($file, $vars=[])
+if (!function_exists('view')) {
+    function view($file, $vars = [])
     {
         return Scrawler::engine()->template()->render($file, $vars);
     }
 }
 
- /**
-  *Generates url with bath
-  */
-  if (! function_exists('url')) {
-      function url($path='')
-      {
-          if (Scrawler::engine()->config()->get('general.https')) {
-              return 'https://'.Scrawler::engine()->request()->getHttpHost().Scrawler::engine()->request()->getBasePath().$path;
-          }
-          return Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler::engine()->request()->getBasePath().$path;
-      }
-  }
+    /**
+     *Generates url with bath
+     */
+    if (! function_exists('url')) {
+        function url($path='')
+        {
+            if (Scrawler::engine()->config()->get('general.https')) {
+                return 'https://'.Scrawler::engine()->request()->getHttpHost().Scrawler::engine()->request()->getBasePath().$path;
+            }
+            return Scrawler::engine()->request()->getSchemeAndHttpHost().Scrawler::engine()->request()->getBasePath().$path;
+        }
+    }
 
-  /**
-   * Returns request object
-   */
-  if (! function_exists('request')) {
-      function request()
-      {
-          return Scrawler::engine()->request();
-      }
-  }
+    /**
+     * Returns request object
+     */
+    if (! function_exists('request')) {
+        function request()
+        {
+            return Scrawler::engine()->request();
+        }
+    }
 
-  /**
-   * Redirect user with flash data if given
-   */
-  if (! function_exists('redirect')) {
-      function redirect($url, $data=[])
-      {
-          if (!empty($data)) {
-              Scrawler::engine()->session()->start();
+    /**
+     * Redirect user with flash data if given
+     */
+    if (! function_exists('redirect')) {
+        function redirect($url, $data=[])
+        {
+            if (!empty($data)) {
+                Scrawler::engine()->session()->start();
 
-              foreach ($data as $key=>$value) {
-                  Scrawler::engine()->session()->flash($key, $value);
-              }
-          }
-          return new RedirectResponse($url);
-      }
-  }
+                foreach ($data as $key=>$value) {
+                    Scrawler::engine()->session()->flash($key, $value);
+                }
+            }
+            return new RedirectResponse($url);
+        }
+    }
 
     /**
      * session read and write helper
      */
-    if (! function_exists('session')) {
-        function session($key, $value=null)
+    if (!function_exists('session')) {
+        function session($key, $value = null)
         {
             Scrawler::engine()->session()->start();
             if ($value == null) {
@@ -96,8 +96,8 @@ if (! function_exists('view')) {
     /**
      * session read and write helper
      */
-    if (! function_exists('flash')) {
-        function flash($key, $messages=null)
+    if (!function_exists('flash')) {
+        function flash($key, $messages = null)
         {
             Scrawler::engine()->session()->start();
             if ($messages == null) {
@@ -112,7 +112,7 @@ if (! function_exists('view')) {
      * Helper function to check if session has a key
      * @depricated
      */
-    if (! function_exists('flash_has')) {
+    if (!function_exists('flash_has')) {
         function session_has($key)
         {
             Scrawler::engine()->session()->start();
@@ -125,7 +125,7 @@ if (! function_exists('view')) {
     /**
      *  helper method to check csrf token
      */
-    if (! function_exists('csrf_check')) {
+    if (!function_exists('csrf_check')) {
         function csrf_check()
         {
             Scrawler::engine()->session()->start();
@@ -141,9 +141,9 @@ if (! function_exists('view')) {
         }
     }
 
-     /**
-     *  helper method to check csrf token
-     */
+        /**
+         *  helper method to check csrf token
+         */
     if (! function_exists('csrf')) {
         function csrf()
         {
@@ -158,7 +158,7 @@ if (! function_exists('view')) {
     /**
      * helper function to get file url
      */
-    if (! function_exists('storage')) {
+    if (!function_exists('storage')) {
         function storage($path)
         {
             return Scrawler::engine()->storage()->getUrl($path);
@@ -168,7 +168,7 @@ if (! function_exists('view')) {
     /**
      * helper function to get db model
      */
-    if (! function_exists('model')) {
+    if (!function_exists('model')) {
         function model($model)
         {
             return Scrawler::engine()->db()->create($model);
@@ -178,8 +178,8 @@ if (! function_exists('view')) {
     /**
      * helper function to write log
      */
-    if (! function_exists('log')) {
-        function log($level, $message, $context=[])
+    if (!function_exists('log')) {
+        function log($level, $message, $context = [])
         {
             return Scrawler::engine()->logger()->$level($message, $context);
         }
@@ -188,8 +188,8 @@ if (! function_exists('view')) {
     /**
      * helper function to validate request
      */
-    if (! function_exists('validate')) {
-        function valdate($rules, $messages=[])
+    if (!function_exists('validate')) {
+        function valdate($rules, $messages = [])
         {
             return Scrawler::engine()->validator()->validateRequest($rules, $messages);
         }
@@ -199,10 +199,10 @@ if (! function_exists('view')) {
      * helper function to validate request and write error in flash
      * @return boolean
      */
-    if (! function_exists('validateAndFlash')) {
-        function valdateAndFlash($rules, $messages=[])
+    if (!function_exists('validateAndFlash')) {
+        function valdateAndFlash($rules, $messages = [])
         {
-            $validator=Scrawler::engine()->validator()->validateRequest($rules, $messages);
+            $validator = Scrawler::engine()->validator()->validateRequest($rules, $messages);
             if ($validator->fails()) {
                 Scrawler::engine()->session()->flash('errors', $validator->errors()->all());
                 return false;

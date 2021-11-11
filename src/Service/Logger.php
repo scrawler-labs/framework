@@ -12,7 +12,7 @@ use Scrawler\Scrawler;
 
 class Logger extends \Monolog\Logger
 {
-    public function __construct($adapter){
+    public function __construct($adapter) {
         parent::__construct('Scrawler');
         $this->pushHandler($adapter);
     }

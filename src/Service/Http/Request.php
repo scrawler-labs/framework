@@ -38,7 +38,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
     public function all()
     {
         if ($this->getContent() && json_decode($this->getContent()))
-        return array_merge($this->request->all(), $this->query->all(),  json_decode($this->getContent(),true));
+        return array_merge($this->request->all(), $this->query->all(), json_decode($this->getContent(), true));
 
         return array_merge($this->request->all(), $this->query->all());
 
@@ -51,11 +51,11 @@ class Request extends \Symfony\Component\HttpFoundation\Request
      */
     public function has($key)
     {
-        if($this->getContent() && json_decode($this->getContent())){
-            if(isset(json_decode($this->getContent())->$key))
+        if ($this->getContent() && json_decode($this->getContent())) {
+            if (isset(json_decode($this->getContent())->$key))
             return true;
         }
-        if($this->request->has($key) || $this->query->has($key)){
+        if ($this->request->has($key) || $this->query->has($key)) {
             return true;
         }
         return false;
