@@ -11,7 +11,7 @@
         }],
     "require": {
         "psr/log": "^1.0",
-        "symfony/http-kernel": "^5.1",
+        "symfony/http-kernel": "^6.0",
         "scrawler/router": "^3.0",
         "filp/whoops": "^2.9",
         "eftec/bladeone": "^4.0",
