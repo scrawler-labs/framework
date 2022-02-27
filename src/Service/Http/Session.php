@@ -57,7 +57,7 @@ class Session extends \Symfony\Component\HttpFoundation\Session\Session
      */
     public function isset($key)
     {
-        $this->has($key);
+        return $this->has($key);
     }
     
 

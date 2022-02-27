@@ -32,29 +32,33 @@ class Template extends BladeOne
     /**
      * Add path to template
      */
-    public function addPath($path){
-        array_push($this->templatePath,$path);
+    public function addPath($path)
+    {
+        array_push($this->templatePath, $path);
     }
 
     /**
      * Strips ('')  to  get the variable passed
      */
-    private function strip($expression){
-        return substr($expression,2,-2);
+    private function strip($expression)
+    {
+        return substr($expression, 2, -2);
     }
 
     /**
      * Include css file from assets
      */
-    public function compileCss($file){
-            $file = $this->strip($file);
-        return '<link rel="stylesheet" type="text/css" href="'.url('/assets/css/'.$file.'.css').'">';  
+    public function compileCss($file)
+    {
+        $file = $this->strip($file);
+        return '<link rel="stylesheet" type="text/css" href="'.url('/assets/css/'.$file.'.css').'">';
     }
 
     /**
      * Include js file from assets
      */
-    public function compileJs($file) {
+    public function compileJs($file)
+    {
         $file = $this->strip($file);
         return '<script src="'.url('/assets/js/'.$file.'.js').'"></script>';
     }
@@ -62,7 +66,8 @@ class Template extends BladeOne
     /**
      * Get url of asset
      */
-    public function compileAsset($file) {
+    protected function compileAsset($file): string
+    {
         $file = $this->strip($file);
         return url('/assets/'.$file);
     }
@@ -70,8 +75,8 @@ class Template extends BladeOne
     /**
      * Get csrf token
      */
-    public function compileToken() {
-
+    public function compileToken()
+    {
         return '<input type="hidden" name="csrf_token" value="{{csrf()}}">';
     }
 }

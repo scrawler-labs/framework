@@ -26,6 +26,7 @@ class Storage extends \League\Flysystem\Filesystem
      */
     public function __construct(StorageInterface $adapter, $config = array())
     {
+        $this->adapter = $adapter;
         parent::__construct($adapter, $config);
     }
 
@@ -56,14 +57,14 @@ class Storage extends \League\Flysystem\Filesystem
                 $paths = [];
                 foreach ($file as $single) {
                     if ($single) {
-                    $filepath = $this->writeRequest($single, $path);
-                    array_push($paths, $filepath);
+                        $filepath = $this->writeRequest($single, $path);
+                        array_push($paths, $filepath);
                     }
                 }
                 $uploaded[$name] = $paths;
             } else {
                 if ($file) {
-                $uploaded[$name] = $this->writeRequest($file, $path);
+                    $uploaded[$name] = $this->writeRequest($file, $path);
                 }
             }
         }
@@ -81,13 +82,11 @@ class Storage extends \League\Flysystem\Filesystem
         } else {
             $filename = $filename.'.'.$file->getClientOriginalExtension();
         }
-        $this->write($content, $path.$filename);
+        $this->write($path.$filename, $content);
         return $path.$filename;
     }
 
-    public function write($content, $path, $config) {
-        parent::write($path, $content, $config);
-    }
+
 
     public function getUrl($path)
     {

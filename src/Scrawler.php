@@ -199,7 +199,7 @@ class Scrawler implements HttpKernelInterface
             }
 
             $response = $this->pipeline()->middleware($middlewares)
-                ->run($this->request, function($request) {
+                ->run($this->request, function ($request) {
                     $engine = new RouterEngine($request, $this->current_router, $this->apiMode);
                     try {
                         $success = $engine->route();
@@ -243,7 +243,7 @@ class Scrawler implements HttpKernelInterface
      */
     private function makeResponse($content)
     {
-        if (!$content instanceof Response) {
+        if (!$content instanceof \Symfony\Component\HttpFoundation\Response) {
             if (is_array($content)) {
                 $content = \json_encode($content);
             }

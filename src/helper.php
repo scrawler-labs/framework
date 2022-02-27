@@ -115,7 +115,7 @@ if (!function_exists('view')) {
     if (!function_exists('session_has')) {
         function session_has($key)
         {
-            flash_has($key);
+            return flash_has($key);
         }
     }
 
