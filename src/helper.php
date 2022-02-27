@@ -112,13 +112,21 @@ if (!function_exists('view')) {
      * Helper function to check if session has a key
      * @depricated
      */
-    if (!function_exists('flash_has')) {
-        function flash_has($key)
+    if (!function_exists('session_has')) {
+        function session_has($key)
         {
-            Scrawler::engine()->session()->start();
-            return Scrawler::engine()->session()->isset($key);
+            flash_has($key);
         }
     }
+
+   
+   if (!function_exists('flash_has')) {
+       function flash_has($key)
+       {
+           Scrawler::engine()->session()->start();
+           return Scrawler::engine()->session()->isset($key);
+       }
+   }
 
 
 
