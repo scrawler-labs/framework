@@ -31,7 +31,6 @@ class ExceptionHandler
     public function handleException($e)
     {
         $response = new Response();
-
         if (Api::isApi()) {
             $status = 500;
             if ($e instanceof \Scrawler\Router\NotFoundException) {
@@ -42,7 +41,6 @@ class ExceptionHandler
                 'status' => $status,
                 'message' => $e->getMessage(),
             ]));
-
         } else {
             if (Scrawler::engine()->config()->get('general.env') != 'prod') {
                 $response->setStatusCode(500);
@@ -57,18 +55,21 @@ class ExceptionHandler
                     $response->setContent('Internal error');
                 }
             }
-
         }
+       
         Scrawler::engine()->setResponse($response);
         Scrawler::engine()->dispatcher()->dispatch(new Kernel('kernel.response'));
         return $response;
     }
+    
 
     public function systemErrorHandler($level, $message, $file, $line)
     {
         $e = $this->whoops->handleError($level, $message, $file, $line);
-        $response = $this->handleException($e);
-        $response->send();
+        if (!is_bool($e)) {
+            $response = $this->handleException($e);
+            $response->send();
+        }
     }
 
     public function systemExceptionHandler($e)
@@ -76,5 +77,4 @@ class ExceptionHandler
         $response = $this->handleException($e);
         $response->send();
     }
-
 }

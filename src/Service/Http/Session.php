@@ -1,6 +1,6 @@
 <?php
 /**
- * Scrawler Session Service 
+ * Scrawler Session Service
  *
  * @package: Scrawler
  * @author: Pranjal Pandey
@@ -10,7 +10,8 @@ namespace Scrawler\Service\Http;
 
 use Scrawler\Scrawler;
 
-Class Session extends \Symfony\Component\HttpFoundation\Session\Session {
+class Session extends \Symfony\Component\HttpFoundation\Session\Session
+{
     /**
      * Magic method to directly set session variable
      *
@@ -36,24 +37,26 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session {
    
     /**
      * check if session has key
-     * 
+     *
      * @param string $key
      * @return bool
      */
-    public function has($key){
-            if(parent::has($key) || parent::getFlashBag()->has($key)){
+    public function has($key)
+    {
+        if (parent::has($key) || parent::getFlashBag()->has($key)) {
             return true;
-            }
-            return false;
+        }
+        return false;
     }
     
     /**
      * legacy isset function
-     * 
+     *
      * @param string $key
      * @return bool
      */
-    public function isset($key){
+    public function isset($key)
+    {
         $this->has($key);
     }
     
@@ -65,14 +68,15 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session {
      * session and deletes the old session from persistence.
      *
      */
-    public function stop() {
+    public function stop()
+    {
         $this->invalidate(0);
     }
 
     /**
      * Emulate legacy flash function
      * Since 2.3.0 flash function now returns flash bag too
-     * 
+     *
      * @param string $type
      * @param string|array $messages
      * @return mixed
@@ -80,10 +84,10 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session {
     public function flash($type = null, $messages = null)
     {
         if (!is_null($messages)) {
-            $this->getFlashBag()->set($type, $messages);
+            $this->getFlashBag()->set($type, [$messages]);
         } else {
             if (!is_null($type)) {
-                //hacky function to emulate old behavior 
+                //hacky function to emulate old behavior
                 $messages = $this->getFlashBag()->get($type);
                 if (isset($messages[0])) {
                     return $messages[0];
@@ -93,5 +97,4 @@ Class Session extends \Symfony\Component\HttpFoundation\Session\Session {
             return $this->getFlashBag()->all();
         }
     }
-
 }

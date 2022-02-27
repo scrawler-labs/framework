@@ -113,7 +113,7 @@ if (!function_exists('view')) {
      * @depricated
      */
     if (!function_exists('flash_has')) {
-        function session_has($key)
+        function flash_has($key)
         {
             Scrawler::engine()->session()->start();
             return Scrawler::engine()->session()->isset($key);
