@@ -1,3 +1,5 @@
+# NOTE : THIS REPOSITERY HAVE BEEN ARCHIVED AND ALL DEVELOPMENT MOVED TO [SCRAWLER-LABS/CORE](https://github.com/scrawler-labs/core)
+
 <p align="center"><img src="https://cdn.discordapp.com/attachments/682361422831026257/709508006618071120/Scrawleer-PHP.svg" width="400"></p>
 <p align="center">
   <a href="https://travis-ci.com/github/scrawler-labs/framework"><img alt="Travis (.com)" src="https://img.shields.io/travis/com/scrawler-labs/framework?style=flat-square"></a>
