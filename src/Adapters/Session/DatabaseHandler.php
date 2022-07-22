@@ -10,13 +10,13 @@ namespace Scrawler\Adapters\Session;
 use Scrawler\Scrawler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\AbstractSessionHandler;
 
-Class DatabaseHandler extends AbstractSessionHandler 
+class DatabaseHandler extends AbstractSessionHandler
 {
     /**
      * Store Database instance
      *
      * @var \Scrawler\Service\Database
-     */    
+     */
     private $db;
 
     /**
@@ -27,13 +27,15 @@ Class DatabaseHandler extends AbstractSessionHandler
     private $gcCalled = false;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Scrawler::engine()->db();
     }
 
-    protected function doWrite($sessionId, $data) {
+    protected function doWrite(string $sessionId, string $data):bool
+    {
         $maxlifetime = (int) ini_get('session.gc_maxlifetime');
-            $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$sessionId]);
+        $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$sessionId]);
         if ($session == null) {
             $session = $this->db->create('session');
         }
@@ -44,7 +46,8 @@ Class DatabaseHandler extends AbstractSessionHandler
         return true;
     }
 
-    protected function doRead($sessionId) {
+    protected function doRead(string $sessionId):string
+    {
         $session = $this->db->findOne('session', 'sessionid = ? AND session_expire > ?', [$sessionId, time()]);
         if ($session == null) {
             return '';
@@ -52,24 +55,25 @@ Class DatabaseHandler extends AbstractSessionHandler
         return $session->session_data;
     }
 
-    protected function doDestroy($sessionId) {
+    protected function doDestroy(string $sessionId):bool
+    {
         $session = $this->db->findOne('session', 'sessionid  LIKE ?', [$sessionId]);
         $this->db->delete($session);
         return true;
     }
 
-    public function updateTimestamp($sessionId, $data) {
+    public function updateTimestamp(string $sessionId, string $data):bool
+    {
         return true;
     }
 
-    public function gc($maxlifetime)
+    public function gc(int $maxlifetime): int|false
     {
-        
         $this->gcCalled = true;
         return true;
     }
 
-    public function close()
+    public function close():bool
     {
         if ($this->gcCalled) {
             $this->gcCalled = false;
@@ -79,9 +83,4 @@ Class DatabaseHandler extends AbstractSessionHandler
         }
         return true;
     }
-
-
 }
- 
-
-

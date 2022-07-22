@@ -41,7 +41,7 @@ class Session extends \Symfony\Component\HttpFoundation\Session\Session
      * @param string $key
      * @return bool
      */
-    public function has($key)
+    public function has(string $key):bool
     {
         if (parent::has($key) || parent::getFlashBag()->has($key)) {
             return true;

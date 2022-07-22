@@ -71,7 +71,7 @@ class Database
                 return $this->toolbox->load($arguments[0], $arguments[1]);
             }
             if (count($arguments) == 1) {
-                return $this->finder->find($arguments[0], null, []);
+                return $this->finder->find($arguments[0], '', []);
             }
         }
         return R::__callStatic($name, $arguments);
